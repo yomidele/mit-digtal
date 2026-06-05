@@ -14,16 +14,243 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_log: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          target_entity: string | null
+          target_id: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_entity?: string | null
+          target_id?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_entity?: string | null
+          target_id?: string | null
+        }
+        Relationships: []
+      }
+      businesses: {
+        Row: {
+          address: string
+          approval_status: string
+          approved_at: string | null
+          approved_by: string | null
+          business_email: string
+          business_name: string
+          business_phone: string
+          cac_number: string | null
+          category: string
+          certifications: string[] | null
+          community: string
+          created_at: string
+          document_urls: string[] | null
+          employee_count: string
+          export_readiness: string
+          financing_needs: string | null
+          id: string
+          image_urls: string[] | null
+          key_markets: string | null
+          lga: string
+          logo_url: string | null
+          market_reach: string
+          operational_status: string
+          ownership_structure: string
+          production_capacity: string | null
+          products_services: string
+          registration_status: string
+          registry_id: string | null
+          rejection_reason: string | null
+          sub_sector: string | null
+          updated_at: string
+          user_id: string
+          view_count: number
+          website: string | null
+        }
+        Insert: {
+          address: string
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          business_email: string
+          business_name: string
+          business_phone: string
+          cac_number?: string | null
+          category: string
+          certifications?: string[] | null
+          community: string
+          created_at?: string
+          document_urls?: string[] | null
+          employee_count: string
+          export_readiness?: string
+          financing_needs?: string | null
+          id?: string
+          image_urls?: string[] | null
+          key_markets?: string | null
+          lga: string
+          logo_url?: string | null
+          market_reach: string
+          operational_status?: string
+          ownership_structure: string
+          production_capacity?: string | null
+          products_services: string
+          registration_status: string
+          registry_id?: string | null
+          rejection_reason?: string | null
+          sub_sector?: string | null
+          updated_at?: string
+          user_id: string
+          view_count?: number
+          website?: string | null
+        }
+        Update: {
+          address?: string
+          approval_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          business_email?: string
+          business_name?: string
+          business_phone?: string
+          cac_number?: string | null
+          category?: string
+          certifications?: string[] | null
+          community?: string
+          created_at?: string
+          document_urls?: string[] | null
+          employee_count?: string
+          export_readiness?: string
+          financing_needs?: string | null
+          id?: string
+          image_urls?: string[] | null
+          key_markets?: string | null
+          lga?: string
+          logo_url?: string | null
+          market_reach?: string
+          operational_status?: string
+          ownership_structure?: string
+          production_capacity?: string | null
+          products_services?: string
+          registration_status?: string
+          registry_id?: string | null
+          rejection_reason?: string | null
+          sub_sector?: string | null
+          updated_at?: string
+          user_id?: string
+          view_count?: number
+          website?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          assigned_lga: string | null
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          assigned_lga?: string | null
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          assigned_lga?: string | null
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_registry_id: { Args: { _lga: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role:
+        | "business_owner"
+        | "lga_moderator"
+        | "state_admin"
+        | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +377,13 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: [
+        "business_owner",
+        "lga_moderator",
+        "state_admin",
+        "super_admin",
+      ],
+    },
   },
 } as const
