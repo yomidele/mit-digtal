@@ -38,12 +38,12 @@ function AdminLayout() {
     );
   }
 
-  const tabs = [
+  const tabs: Array<{ to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
     { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
     { to: "/admin/submissions", label: "Submissions", icon: Inbox },
     { to: "/admin/businesses", label: "All businesses", icon: Building2 },
     ...(isSuper ? [{ to: "/admin/users", label: "Users & roles", icon: Users }] : []),
-  ] as const;
+  ];
 
   return (
     <Shell>

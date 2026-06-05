@@ -41,6 +41,12 @@ function AllBusinesses() {
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Businesses");
       const filename = `made-in-taraba-businesses-${new Date().toISOString().slice(0, 10)}.${kind}`;
+      const triggerDownload = (blob: Blob, name: string) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      };
       if (kind === "csv") {
         const csv = XLSX.utils.sheet_to_csv(ws);
         triggerDownload(new Blob([csv], { type: "text/csv;charset=utf-8;" }), filename);
