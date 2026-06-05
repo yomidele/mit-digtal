@@ -111,9 +111,9 @@ function Directory() {
 
           {totalPages > 1 && (
             <div className="mt-8 flex items-center justify-center gap-2">
-              <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => nav({ search: (s) => ({ ...s, page: currentPage - 1 }) })}>Previous</Button>
+              <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => nav({ search: { ...search, page: currentPage - 1 } })}>Previous</Button>
               <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
-              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => nav({ search: (s) => ({ ...s, page: currentPage + 1 }) })}>Next</Button>
+              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => nav({ search: { ...search, page: currentPage + 1 } })}>Next</Button>
             </div>
           )}
         </div>
