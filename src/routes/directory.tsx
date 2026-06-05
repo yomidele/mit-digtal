@@ -59,7 +59,7 @@ function Directory() {
           <p className="mt-2 text-white/85">Browse every approved business across Taraba State.</p>
           <form
             className="mt-6 flex flex-col gap-2 sm:flex-row"
-            onSubmit={(e) => { e.preventDefault(); nav({ search: (s) => ({ ...s, q: q || undefined, page: 1 }) }); }}
+            onSubmit={(e) => { e.preventDefault(); nav({ search: (s: typeof search) => ({ ...s, q: q || undefined, page: 1 }) }); }}
           >
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
