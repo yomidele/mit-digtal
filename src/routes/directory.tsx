@@ -73,9 +73,9 @@ function Directory() {
       <section className="container mx-auto grid gap-8 px-4 py-10 lg:grid-cols-[260px_1fr]">
         <aside className="space-y-4">
           <h3 className="font-display text-sm font-bold uppercase tracking-wider text-primary">Filter</h3>
-          <FilterSelect label="Sector" value={search.category} options={CATEGORY_LIST} onChange={(v) => nav({ search: (s) => ({ ...s, category: v, page: 1 }) })} />
-          <FilterSelect label="LGA" value={search.lga} options={[...TARABA_LGAS]} onChange={(v) => nav({ search: (s) => ({ ...s, lga: v, page: 1 }) })} />
-          <FilterSelect label="Market reach" value={search.marketReach} options={[...MARKET_REACH]} onChange={(v) => nav({ search: (s) => ({ ...s, marketReach: v, page: 1 }) })} />
+          <FilterSelect label="Sector" value={search.category} options={CATEGORY_LIST} onChange={(v) => nav({ search: { ...search, category: v, page: 1 } })} />
+          <FilterSelect label="LGA" value={search.lga} options={[...TARABA_LGAS]} onChange={(v) => nav({ search: { ...search, lga: v, page: 1 } })} />
+          <FilterSelect label="Market reach" value={search.marketReach} options={[...MARKET_REACH]} onChange={(v) => nav({ search: { ...search, marketReach: v, page: 1 } })} />
           <Button variant="ghost" size="sm" onClick={() => nav({ search: {} })} className="w-full">Clear filters</Button>
         </aside>
 
