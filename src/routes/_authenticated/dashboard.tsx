@@ -94,7 +94,7 @@ function BusinessCard({ biz }: { biz: any }) {
         <div className="mt-6 flex flex-wrap gap-3">
           {canEdit ? (
             <Button asChild className="bg-primary hover:bg-primary-deep">
-              <Link to="/_authenticated/register-business"><Pencil className="mr-2 h-4 w-4" />Edit submission</Link>
+              <Link to="/register-business"><Pencil className="mr-2 h-4 w-4" />Edit submission</Link>
             </Button>
           ) : (
             <Button asChild variant="outline">
