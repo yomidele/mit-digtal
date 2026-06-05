@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
-const DEMO = [
+type AppRole = "business_owner" | "lga_moderator" | "state_admin" | "super_admin";
+const DEMO: Array<{ email: string; password: string; full_name: string; role: AppRole; assigned_lga: string | null }> = [
   { email: "lga@demo.taraba.gov.ng", password: "Demo!Taraba2026", full_name: "Demo LGA Moderator", role: "lga_moderator", assigned_lga: "Jalingo" },
   { email: "state@demo.taraba.gov.ng", password: "Demo!Taraba2026", full_name: "Demo State Admin", role: "state_admin", assigned_lga: null },
   { email: "super@demo.taraba.gov.ng", password: "Demo!Taraba2026", full_name: "Demo Super Admin", role: "super_admin", assigned_lga: null },
