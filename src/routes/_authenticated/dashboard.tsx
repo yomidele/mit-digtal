@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, Clock, Eye, FileText, Pencil, XCircle } from "lucide-react";
+import { CheckCircle2, Clock, Download, Eye, FileText, Pencil, XCircle, Ban } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,7 @@ const STATUS = {
   pending: { color: "bg-warning text-warning-foreground", icon: Clock, label: "Pending Review" },
   approved: { color: "bg-success text-success-foreground", icon: CheckCircle2, label: "Approved" },
   rejected: { color: "bg-destructive text-destructive-foreground", icon: XCircle, label: "Rejected" },
+  suspended: { color: "bg-destructive text-destructive-foreground", icon: Ban, label: "Suspended" },
 } as const;
 
 function Dashboard() {
@@ -97,9 +98,16 @@ function BusinessCard({ biz }: { biz: any }) {
               <Link to="/register-business"><Pencil className="mr-2 h-4 w-4" />Edit submission</Link>
             </Button>
           ) : (
-            <Button asChild variant="outline">
-              <Link to="/business/$id" params={{ id: biz.id }}>View public listing</Link>
-            </Button>
+            <>
+              <Button asChild variant="outline">
+                <Link to="/business/$id" params={{ id: biz.id }}>View public listing</Link>
+              </Button>
+              <Button asChild className="bg-primary hover:bg-primary-deep">
+                <a href={`/api/businesses/${biz.id}/certificate.pdf`} target="_blank" rel="noopener noreferrer">
+                  <Download className="mr-2 h-4 w-4" />Download certificate
+                </a>
+              </Button>
+            </>
           )}
         </div>
       </div>

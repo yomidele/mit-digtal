@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { MapPin, Mail, Phone, Globe, Building2, Users, Target, Award, ArrowLeft } from "lucide-react";
+import { MapPin, Mail, Phone, Globe, Building2, Users, Target, Award, ArrowLeft, Download } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Badge } from "@/components/ui/badge";
@@ -46,6 +46,13 @@ function BusinessPage() {
                 <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4" />{b.community}, {b.lga}</span>
                 <span className="inline-flex items-center gap-1"><Users className="h-4 w-4" />{b.employee_count} employees</span>
                 <span className="inline-flex items-center gap-1"><Target className="h-4 w-4" />{b.market_reach}</span>
+              </div>
+              <div className="mt-4">
+                <Button asChild size="sm" className="bg-primary hover:bg-primary-deep">
+                  <a href={`/api/businesses/${b.id}/certificate.pdf`} target="_blank" rel="noopener noreferrer">
+                    <Download className="mr-2 h-4 w-4" />Download official certificate
+                  </a>
+                </Button>
               </div>
             </div>
           </div>
