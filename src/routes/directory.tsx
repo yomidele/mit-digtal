@@ -82,11 +82,13 @@ function Directory() {
         <div>
           <div className="mb-4 text-sm text-muted-foreground">{isLoading ? "Loading…" : `${data?.count ?? 0} businesses`}</div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {(data?.rows ?? []).map((b) => (
+            {(data?.rows ?? []).map((b) => {
+              const Icon = SECTOR_ICONS[b.category] ?? SECTOR_ICONS["Other"];
+              return (
               <Link key={b.id} to="/business/$id" params={{ id: b.id }} className="group rounded-2xl border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-elegant">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-secondary text-2xl">
-                    {b.logo_url ? <img src={b.logo_url} alt="" className="h-14 w-14 rounded-xl object-cover" loading="lazy" /> : SECTOR_ICONS[b.category] ?? "🏢"}
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    {b.logo_url ? <img src={b.logo_url} alt="" className="h-14 w-14 rounded-xl object-cover" loading="lazy" /> : <Icon className="h-7 w-7" strokeWidth={1.75} />}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate font-semibold text-foreground group-hover:text-primary">{b.business_name}</div>
@@ -101,7 +103,8 @@ function Directory() {
                   </div>
                 </div>
               </Link>
-            ))}
+              );
+            })}
             {!isLoading && (data?.rows.length ?? 0) === 0 && (
               <div className="col-span-full rounded-2xl border border-dashed border-border p-12 text-center text-sm text-muted-foreground">
                 No businesses match your filters yet.

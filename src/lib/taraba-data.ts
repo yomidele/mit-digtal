@@ -32,15 +32,29 @@ export const MARKET_REACH = ["Local", "State-wide", "National", "International"]
 export const EXPORT_READINESS = ["Yes", "No", "Working Towards It"] as const;
 export const COMMON_CERTIFICATIONS = ["NAFDAC", "SON", "ISO 9001", "ISO 22000", "HACCP", "Organic", "Halal"];
 
-export const SECTOR_ICONS: Record<string, string> = {
-  "Agriculture": "🌾",
-  "Agro-processing": "🏭",
-  "Mining": "⛏️",
-  "Manufacturing": "🔧",
-  "Entrepreneurship": "🚀",
-  "Trade": "🏪",
-  "Crafts": "🎨",
-  "Tourism": "🏞️",
-  "Creative Industries": "🎭",
-  "Other": "📦",
+import {
+  Wheat,
+  Factory,
+  Pickaxe,
+  Wrench,
+  Rocket,
+  Store,
+  Palette,
+  Mountain,
+  Drama,
+  Package,
+  type LucideIcon,
+} from "lucide-react";
+
+export const SECTOR_ICONS: Record<string, LucideIcon> = {
+  "Agriculture": Wheat,
+  "Agro-processing": Factory,
+  "Mining": Pickaxe,
+  "Manufacturing": Wrench,
+  "Entrepreneurship": Rocket,
+  "Trade": Store,
+  "Crafts": Palette,
+  "Tourism": Mountain,
+  "Creative Industries": Drama,
+  "Other": Package,
 };
