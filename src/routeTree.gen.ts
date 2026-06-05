@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BusinessIdRouteImport } from './routes/business.$id'
 import { Route as AuthenticatedRegisterBusinessRouteImport } from './routes/_authenticated/register-business'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as ApiBusinessesIdCertificateDotpdfRouteImport } from './routes/api/businesses.$id.certificate[.]pdf'
 
 const DirectoryRoute = DirectoryRouteImport.update({
   id: '/directory',
@@ -58,6 +59,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiBusinessesIdCertificateDotpdfRoute =
+  ApiBusinessesIdCertificateDotpdfRouteImport.update({
+    id: '/api/businesses/$id/certificate.pdf',
+    path: '/api/businesses/$id/certificate.pdf',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
+  '/api/businesses/$id/certificate.pdf': typeof ApiBusinessesIdCertificateDotpdfRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -76,6 +84,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
+  '/api/businesses/$id/certificate.pdf': typeof ApiBusinessesIdCertificateDotpdfRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -87,6 +96,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
+  '/api/businesses/$id/certificate.pdf': typeof ApiBusinessesIdCertificateDotpdfRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/register-business'
     | '/business/$id'
+    | '/api/businesses/$id/certificate.pdf'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/register-business'
     | '/business/$id'
+    | '/api/businesses/$id/certificate.pdf'
   id:
     | '__root__'
     | '/'
@@ -117,6 +129,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/register-business'
     | '/business/$id'
+    | '/api/businesses/$id/certificate.pdf'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -126,6 +139,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DirectoryRoute: typeof DirectoryRoute
   BusinessIdRoute: typeof BusinessIdRoute
+  ApiBusinessesIdCertificateDotpdfRoute: typeof ApiBusinessesIdCertificateDotpdfRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -186,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/businesses/$id/certificate.pdf': {
+      id: '/api/businesses/$id/certificate.pdf'
+      path: '/api/businesses/$id/certificate.pdf'
+      fullPath: '/api/businesses/$id/certificate.pdf'
+      preLoaderRoute: typeof ApiBusinessesIdCertificateDotpdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -209,6 +230,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DirectoryRoute: DirectoryRoute,
   BusinessIdRoute: BusinessIdRoute,
+  ApiBusinessesIdCertificateDotpdfRoute: ApiBusinessesIdCertificateDotpdfRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
