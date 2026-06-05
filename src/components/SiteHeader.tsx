@@ -2,16 +2,28 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { ShieldCheck } from "lucide-react";
 import crest from "@/assets/taraba-crest.png";
 
 export function SiteHeader() {
   const [user, setUser] = useState<{ id: string } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user ? { id: data.user.id } : null));
+    const load = async (uid: string | null) => {
+      if (!uid) { setIsAdmin(false); return; }
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      const set = new Set((data ?? []).map((r) => r.role));
+      setIsAdmin(set.has("lga_moderator") || set.has("state_admin") || set.has("super_admin"));
+    };
+    supabase.auth.getUser().then(({ data }) => {
+      const u = data.user ? { id: data.user.id } : null;
+      setUser(u); load(u?.id ?? null);
+    });
     const { data } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ? { id: session.user.id } : null);
+      const u = session?.user ? { id: session.user.id } : null;
+      setUser(u); load(u?.id ?? null);
     });
     return () => data.subscription.unsubscribe();
   }, []);
@@ -39,6 +51,11 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           {user ? (
             <>
+              {isAdmin && (
+                <Button asChild variant="ghost" size="sm" className="text-primary">
+                  <Link to="/admin"><ShieldCheck className="mr-1 h-4 w-4" />Admin</Link>
+                </Button>
+              )}
               <Button asChild variant="ghost" size="sm"><Link to="/dashboard">Dashboard</Link></Button>
               <Button onClick={signOut} variant="outline" size="sm">Sign out</Button>
             </>
