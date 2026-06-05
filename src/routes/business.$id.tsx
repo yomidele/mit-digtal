@@ -24,6 +24,8 @@ function BusinessPage() {
   if (isLoading) return <div className="min-h-screen bg-background"><SiteHeader /><div className="container mx-auto px-4 py-16 text-muted-foreground">Loading…</div></div>;
   if (!b) throw notFound();
 
+  const Icon = SECTOR_ICONS[b.category] ?? SECTOR_ICONS["Other"];
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -32,11 +34,9 @@ function BusinessPage() {
 
         <div className="rounded-3xl border border-border bg-card p-8 shadow-elegant">
           <div className="flex flex-col items-start gap-6 sm:flex-row">
-            {(() => { const Icon = SECTOR_ICONS[b.category] ?? SECTOR_ICONS["Other"]; return (
             <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               {b.logo_url ? <img src={b.logo_url} alt="" className="h-20 w-20 rounded-2xl object-cover" /> : <Icon className="h-10 w-10" strokeWidth={1.5} />}
             </div>
-            ); })()}
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="font-display text-3xl font-bold text-foreground">{b.business_name}</h1>
