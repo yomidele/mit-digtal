@@ -56,7 +56,7 @@ function EmptyState() {
       <h2 className="mt-4 font-display text-xl font-bold">Register your business</h2>
       <p className="mt-2 text-sm text-muted-foreground">Complete the 6-step form to be added to the Taraba State Digital Registry.</p>
       <Button asChild className="mt-6 bg-primary hover:bg-primary-deep">
-        <Link to="/_authenticated/register-business">Start registration</Link>
+        <Link to="/register-business">Start registration</Link>
       </Button>
     </div>
   );
