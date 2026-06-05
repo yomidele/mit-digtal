@@ -47,9 +47,81 @@ function AuthPage() {
             <TabsContent value="signin"><SignInForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
             <TabsContent value="signup"><SignUpForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
           </Tabs>
-        </div>
+        <DemoAdminPanel onUse={(email) => { /* prefill handled inline */ void email; }} />
       </section>
       <SiteFooter />
+    </div>
+  );
+}
+
+const DEMO_ADMINS = [
+  { label: "LGA Moderator", email: "lga@demo.taraba.gov.ng" },
+  { label: "State Admin", email: "state@demo.taraba.gov.ng" },
+  { label: "Super Admin", email: "super@demo.taraba.gov.ng" },
+];
+const DEMO_PASSWORD = "Demo!Taraba2026";
+
+function DemoAdminPanel({ onUse }: { onUse: (email: string) => void }) {
+  const seed = useServerFn(seedDemoAdmins);
+  const [busy, setBusy] = useState(false);
+  const [seeded, setSeeded] = useState(false);
+
+  async function handleSeed() {
+    setBusy(true);
+    try {
+      await seed();
+      setSeeded(true);
+      toast.success("Demo admin accounts ready");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to seed");
+    } finally { setBusy(false); }
+  }
+
+  async function quickLogin(email: string) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password: DEMO_PASSWORD });
+    if (error) return toast.error(error.message + " — click 'Provision' first");
+    toast.success("Signed in");
+    onUse(email);
+  }
+
+  return (
+    <div className="mt-6 w-full max-w-md rounded-3xl border border-dashed border-primary/30 bg-secondary/40 p-6">
+      <div className="flex items-center gap-2">
+        <ShieldCheck className="h-5 w-5 text-primary" />
+        <h2 className="font-display text-sm font-bold uppercase tracking-wider text-primary">Demo Admin Access</h2>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Provision demo accounts to preview the LGA Moderator, State Admin and Super Admin dashboards.
+      </p>
+      <Button onClick={handleSeed} disabled={busy} size="sm" className="mt-3 w-full bg-primary hover:bg-primary-deep">
+        <Sparkles className="mr-2 h-4 w-4" />
+        {busy ? "Provisioning…" : seeded ? "Re-provision demo accounts" : "Provision demo admin accounts"}
+      </Button>
+      <div className="mt-4 space-y-2">
+        {DEMO_ADMINS.map((a) => (
+          <div key={a.email} className="rounded-xl border border-border bg-card p-3">
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <div className="text-xs font-semibold text-foreground">{a.label}</div>
+                <div className="font-mono text-[11px] text-muted-foreground">{a.email}</div>
+              </div>
+              <div className="flex gap-1">
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { navigator.clipboard.writeText(a.email); toast.success("Email copied"); }} aria-label="Copy email">
+                  <Copy className="h-3.5 w-3.5" />
+                </Button>
+                <Button size="sm" variant="outline" className="h-7" onClick={() => quickLogin(a.email)}>Sign in</Button>
+              </div>
+            </div>
+          </div>
+        ))}
+        <div className="flex items-center justify-between rounded-xl bg-background p-2.5 font-mono text-[11px]">
+          <span className="text-muted-foreground">Password:</span>
+          <span className="font-semibold text-foreground">{DEMO_PASSWORD}</span>
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => { navigator.clipboard.writeText(DEMO_PASSWORD); toast.success("Password copied"); }} aria-label="Copy password">
+            <Copy className="h-3 w-3" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
