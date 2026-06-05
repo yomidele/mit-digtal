@@ -47,7 +47,8 @@ function AuthPage() {
             <TabsContent value="signin"><SignInForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
             <TabsContent value="signup"><SignUpForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
           </Tabs>
-        <DemoAdminPanel onUse={(email) => { /* prefill handled inline */ void email; }} />
+        </div>
+        <DemoAdminPanel onUse={(email) => { void email; }} />
       </section>
       <SiteFooter />
     </div>
