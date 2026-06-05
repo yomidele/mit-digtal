@@ -48,8 +48,7 @@ export const getBusiness = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error) throw new Error(error.message);
     if (!row) return null;
-    // fire-and-forget view count
-    await supabaseAdmin.rpc as unknown;
+    // fire-and-forget view count increment
     await supabaseAdmin.from("businesses").update({ view_count: (row.view_count ?? 0) + 1 }).eq("id", data.id);
     return row;
   });

@@ -59,7 +59,7 @@ function Directory() {
           <p className="mt-2 text-white/85">Browse every approved business across Taraba State.</p>
           <form
             className="mt-6 flex flex-col gap-2 sm:flex-row"
-            onSubmit={(e) => { e.preventDefault(); nav({ search: (s) => ({ ...s, q: q || undefined, page: 1 }) }); }}
+            onSubmit={(e) => { e.preventDefault(); nav({ search: (s: typeof search) => ({ ...s, q: q || undefined, page: 1 }) }); }}
           >
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -73,9 +73,9 @@ function Directory() {
       <section className="container mx-auto grid gap-8 px-4 py-10 lg:grid-cols-[260px_1fr]">
         <aside className="space-y-4">
           <h3 className="font-display text-sm font-bold uppercase tracking-wider text-primary">Filter</h3>
-          <FilterSelect label="Sector" value={search.category} options={CATEGORY_LIST} onChange={(v) => nav({ search: (s) => ({ ...s, category: v, page: 1 }) })} />
-          <FilterSelect label="LGA" value={search.lga} options={[...TARABA_LGAS]} onChange={(v) => nav({ search: (s) => ({ ...s, lga: v, page: 1 }) })} />
-          <FilterSelect label="Market reach" value={search.marketReach} options={[...MARKET_REACH]} onChange={(v) => nav({ search: (s) => ({ ...s, marketReach: v, page: 1 }) })} />
+          <FilterSelect label="Sector" value={search.category} options={CATEGORY_LIST} onChange={(v) => nav({ search: { ...search, category: v, page: 1 } })} />
+          <FilterSelect label="LGA" value={search.lga} options={[...TARABA_LGAS]} onChange={(v) => nav({ search: { ...search, lga: v, page: 1 } })} />
+          <FilterSelect label="Market reach" value={search.marketReach} options={[...MARKET_REACH]} onChange={(v) => nav({ search: { ...search, marketReach: v, page: 1 } })} />
           <Button variant="ghost" size="sm" onClick={() => nav({ search: {} })} className="w-full">Clear filters</Button>
         </aside>
 
@@ -111,9 +111,9 @@ function Directory() {
 
           {totalPages > 1 && (
             <div className="mt-8 flex items-center justify-center gap-2">
-              <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => nav({ search: (s) => ({ ...s, page: currentPage - 1 }) })}>Previous</Button>
+              <Button variant="outline" size="sm" disabled={currentPage <= 1} onClick={() => nav({ search: { ...search, page: currentPage - 1 } })}>Previous</Button>
               <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
-              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => nav({ search: (s) => ({ ...s, page: currentPage + 1 }) })}>Next</Button>
+              <Button variant="outline" size="sm" disabled={currentPage >= totalPages} onClick={() => nav({ search: { ...search, page: currentPage + 1 } })}>Next</Button>
             </div>
           )}
         </div>

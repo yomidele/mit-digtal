@@ -15,6 +15,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BusinessIdRouteImport } from './routes/business.$id'
+import { Route as AuthenticatedRegisterBusinessRouteImport } from './routes/_authenticated/register-business'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const DirectoryRoute = DirectoryRouteImport.update({
@@ -46,6 +47,12 @@ const BusinessIdRoute = BusinessIdRouteImport.update({
   path: '/business/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRegisterBusinessRoute =
+  AuthenticatedRegisterBusinessRouteImport.update({
+    id: '/register-business',
+    path: '/register-business',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
 }
 export interface FileRoutesByTo {
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
 }
 export interface FileRoutesById {
@@ -76,6 +85,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
 }
 export interface FileRouteTypes {
@@ -86,9 +96,17 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/dashboard'
+    | '/register-business'
     | '/business/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth' | '/directory' | '/dashboard' | '/business/$id'
+  to:
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/directory'
+    | '/dashboard'
+    | '/register-business'
+    | '/business/$id'
   id:
     | '__root__'
     | '/'
@@ -97,6 +115,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/_authenticated/dashboard'
+    | '/_authenticated/register-business'
     | '/business/$id'
   fileRoutesById: FileRoutesById
 }
@@ -153,6 +172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/register-business': {
+      id: '/_authenticated/register-business'
+      path: '/register-business'
+      fullPath: '/register-business'
+      preLoaderRoute: typeof AuthenticatedRegisterBusinessRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -165,10 +191,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedRegisterBusinessRoute: typeof AuthenticatedRegisterBusinessRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedRegisterBusinessRoute: AuthenticatedRegisterBusinessRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
