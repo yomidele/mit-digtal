@@ -86,12 +86,17 @@ function Index() {
           <p className="mt-3 text-muted-foreground">From agriculture to creative industries, the registry covers every sector driving the state forward.</p>
         </div>
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {CATEGORY_LIST.map((c) => (
-            <Link key={c} to="/directory" search={{ category: c }} className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary hover:shadow-elegant">
-              <div className="text-3xl">{SECTOR_ICONS[c]}</div>
-              <div className="mt-3 font-semibold text-foreground group-hover:text-primary">{c}</div>
-            </Link>
-          ))}
+          {CATEGORY_LIST.map((c) => {
+            const Icon = SECTOR_ICONS[c];
+            return (
+              <Link key={c} to="/directory" search={{ category: c }} className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary hover:shadow-elegant">
+                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
+                  {Icon ? <Icon className="h-6 w-6" strokeWidth={1.75} /> : null}
+                </div>
+                <div className="mt-3 font-semibold text-foreground group-hover:text-primary">{c}</div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
