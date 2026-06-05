@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-async function assertAdmin(supabase: ReturnType<typeof requireSupabaseAuth> extends never ? never : any, userId: string, allowModerator = false) {
+async function assertAdmin(supabase: any, userId: string, allowModerator = false) {
   const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
   const set = new Set((roles ?? []).map((r: { role: string }) => r.role));
   const ok = set.has("state_admin") || set.has("super_admin") || (allowModerator && set.has("lga_moderator"));
