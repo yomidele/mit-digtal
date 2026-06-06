@@ -37,6 +37,7 @@ export function SiteFooter() {
           <FooterCol title="Support" links={[
             { to: "/help", label: "Help Center" },
             { to: "/registration-guide", label: "Registration Guide" },
+            { to: "/admin/login", label: "Admin Login" },
             { to: "/privacy", label: "Privacy Policy" },
             { to: "/terms", label: "Terms of Use" },
           ]} />
