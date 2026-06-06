@@ -37,6 +37,7 @@ export function SiteFooter() {
           <FooterCol title="Support" links={[
             { to: "/help", label: "Help Center" },
             { to: "/registration-guide", label: "Registration Guide" },
+            { to: "/admin/login", label: "Admin Login" },
             { to: "/privacy", label: "Privacy Policy" },
             { to: "/terms", label: "Terms of Use" },
           ]} />
@@ -72,7 +73,7 @@ export function SiteFooter() {
 }
 
 type FooterLink =
-  | { to: "/" | "/directory" | "/about" | "/help" | "/registration-guide" | "/privacy" | "/terms"; label: string; search?: undefined }
+  | { to: "/" | "/directory" | "/about" | "/help" | "/registration-guide" | "/privacy" | "/terms" | "/admin/login"; label: string; search?: undefined }
   | { to: "/auth"; label: string; search: { mode: "signup" | "login" } }
   | { href: string; label: string };
 
