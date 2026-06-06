@@ -25,10 +25,39 @@ function BusinessPage() {
   const fetcher = useServerFn(getBusiness);
   const { data: b, isLoading } = useQuery({ queryKey: ["business", id], queryFn: () => fetcher({ data: { id } }) });
 
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setCurrentUserId(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setCurrentUserId(session?.user?.id ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const downloadFn = useServerFn(downloadMyCertificate);
+  const downloadMut = useMutation({
+    mutationFn: () => downloadFn({ data: { businessId: id } }),
+    onSuccess: ({ base64, filename }) => {
+      const bin = atob(base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    },
+    onError: (e: Error) => toast.error(e.message ?? "Download failed"),
+  });
+
   if (isLoading) return <div className="min-h-screen bg-background"><SiteHeader /><div className="container mx-auto px-4 py-16 text-muted-foreground">Loading…</div></div>;
   if (!b) throw notFound();
 
   const Icon = SECTOR_ICONS[b.category] ?? SECTOR_ICONS["Other"];
+  const isOwner = !!currentUserId && currentUserId === b.user_id;
 
   return (
     <div className="min-h-screen bg-background">
