@@ -97,6 +97,14 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function ScrollToTop() {
+  const router = useRouter();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [router.state.location.pathname]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
@@ -110,6 +118,7 @@ function RootComponent() {
   }, [router, queryClient]);
   return (
     <QueryClientProvider client={queryClient}>
+      <ScrollToTop />
       <Outlet />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
