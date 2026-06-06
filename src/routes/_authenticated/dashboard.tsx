@@ -1,14 +1,15 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { CheckCircle2, Clock, Download, Eye, FileText, Pencil, XCircle, Ban } from "lucide-react";
+import { CheckCircle2, Clock, Download, Eye, FileText, Pencil, XCircle, Ban, History } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getMyBusiness, getMyProfile } from "@/lib/business.functions";
 import { getMyRoles } from "@/lib/admin.functions";
+import { recordCertificateDownload, getMyDownloadHistory } from "@/lib/certificates.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "My Dashboard — Made-in-Taraba Registry" }] }),
@@ -65,7 +66,10 @@ function Dashboard() {
         ) : !biz ? (
           <EmptyState />
         ) : (
-          <BusinessCard biz={biz} />
+          <>
+            <BusinessCard biz={biz} />
+            {biz.approval_status === "approved" && <DownloadHistory />}
+          </>
         )}
       </div>
       <SiteFooter />
@@ -90,6 +94,19 @@ function BusinessCard({ biz }: { biz: any }) {
   const status = STATUS[biz.approval_status as keyof typeof STATUS] ?? STATUS.pending;
   const StatusIcon = status.icon;
   const canEdit = biz.approval_status !== "approved";
+  const qc = useQueryClient();
+  const recordFn = useServerFn(recordCertificateDownload);
+  const recordMut = useMutation({
+    mutationFn: () => recordFn({ data: { businessId: biz.id } }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["my-download-history"] }),
+  });
+
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    recordMut.mutate();
+    window.open(`/api/businesses/${biz.id}/certificate.pdf`, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="mt-8 space-y-6">
       <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
@@ -125,14 +142,59 @@ function BusinessCard({ biz }: { biz: any }) {
               <Button asChild variant="outline">
                 <Link to="/business/$id" params={{ id: biz.id }}>View public listing</Link>
               </Button>
-              <Button asChild className="bg-primary hover:bg-primary-deep">
-                <a href={`/api/businesses/${biz.id}/certificate.pdf`} target="_blank" rel="noopener noreferrer">
-                  <Download className="mr-2 h-4 w-4" />Download certificate
-                </a>
+              <Button onClick={handleDownload} className="bg-primary hover:bg-primary-deep">
+                <Download className="mr-2 h-4 w-4" />Download certificate
               </Button>
             </>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function DownloadHistory() {
+  const fetchFn = useServerFn(getMyDownloadHistory);
+  const { data, isLoading } = useQuery({ queryKey: ["my-download-history"], queryFn: () => fetchFn() });
+  const rows = data ?? [];
+  return (
+    <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+      <div className="flex items-center gap-2">
+        <History className="h-5 w-5 text-primary" />
+        <h3 className="font-display text-lg font-bold">Certificate download history</h3>
+      </div>
+      <p className="mt-1 text-sm text-muted-foreground">A full audit trail of every time your certificate has been downloaded.</p>
+      <div className="mt-4">
+        {isLoading ? (
+          <div className="text-sm text-muted-foreground">Loading history…</div>
+        ) : rows.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border bg-secondary/40 p-6 text-center text-sm text-muted-foreground">
+            No downloads recorded yet. Your next download will appear here.
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-xl border border-border">
+            <table className="w-full text-sm">
+              <thead className="bg-secondary/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-2.5">Date &amp; Time</th>
+                  <th className="px-4 py-2.5">Registry ID</th>
+                  <th className="px-4 py-2.5">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {rows.map((r: any) => (
+                  <tr key={r.id}>
+                    <td className="px-4 py-2.5 text-foreground">
+                      {new Date(r.created_at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+                    </td>
+                    <td className="px-4 py-2.5 font-mono text-xs text-primary">{r.details?.registry_id ?? "—"}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground">Certificate download</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

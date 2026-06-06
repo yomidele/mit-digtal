@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import tarabaCrestUrl from "@/assets/taraba-crest-sm.png?url";
-import nigeriaArmsUrl from "@/assets/nigeria-coat-of-arms-sm.png?url";
+import tarabaSealUrl from "@/assets/taraba-state-seal-sm.png?url";
+import nigeriaWatermarkUrl from "@/assets/nigeria-coat-of-arms-watermark.png?url";
 
 async function fetchPngBytes(assetUrl: string, requestUrl: string): Promise<Uint8Array | null> {
   try {
@@ -50,28 +51,55 @@ export const Route = createFileRoute("/api/businesses/$id/certificate.pdf")({
         page.drawRectangle({ x: 18, y: 18, width: width - 36, height: height - 36, borderColor: green, borderWidth: 3 });
         page.drawRectangle({ x: 28, y: 28, width: width - 56, height: height - 56, borderColor: gold, borderWidth: 1 });
 
-        // Header band
+        // Fetch all images in parallel
+        const [tarabaBytes, sealBytes, watermarkBytes] = await Promise.all([
+          fetchPngBytes(tarabaCrestUrl, request.url),
+          fetchPngBytes(tarabaSealUrl, request.url),
+          fetchPngBytes(nigeriaWatermarkUrl, request.url),
+        ]);
+
+        // ===== BACKGROUND WATERMARK (Nigerian coat of arms, centered, transparent) =====
+        if (watermarkBytes) {
+          const wm = await pdf.embedPng(watermarkBytes);
+          const wmSize = 340;
+          const dims = wm.scaleToFit(wmSize, wmSize);
+          page.drawImage(wm, {
+            x: (width - dims.width) / 2,
+            y: (height - dims.height) / 2 - 20,
+            width: dims.width,
+            height: dims.height,
+          });
+        }
+
+        // ===== HEADER BAND =====
         const headerH = 96;
         const headerY = height - 28 - headerH;
         page.drawRectangle({ x: 28, y: headerY, width: width - 56, height: headerH, color: green });
         page.drawRectangle({ x: 28, y: headerY, width: width - 56, height: 4, color: gold });
 
-        // Embed logos (left = Taraba crest, right = Nigeria coat of arms)
-        const [tarabaBytes, nigeriaBytes] = await Promise.all([
-          fetchPngBytes(tarabaCrestUrl, request.url),
-          fetchPngBytes(nigeriaArmsUrl, request.url),
-        ]);
         const logoSize = 78;
         const logoY = headerY + (headerH - logoSize) / 2;
+        // Left logo — Made-in-Taraba (taraba crest)
         if (tarabaBytes) {
           const img = await pdf.embedPng(tarabaBytes);
           const dims = img.scaleToFit(logoSize, logoSize);
-          page.drawImage(img, { x: 48 + (logoSize - dims.width) / 2, y: logoY + (logoSize - dims.height) / 2, width: dims.width, height: dims.height });
+          page.drawImage(img, {
+            x: 48 + (logoSize - dims.width) / 2,
+            y: logoY + (logoSize - dims.height) / 2,
+            width: dims.width,
+            height: dims.height,
+          });
         }
-        if (nigeriaBytes) {
-          const img = await pdf.embedPng(nigeriaBytes);
+        // Right logo — Taraba State Government seal
+        if (sealBytes) {
+          const img = await pdf.embedPng(sealBytes);
           const dims = img.scaleToFit(logoSize, logoSize);
-          page.drawImage(img, { x: width - 48 - logoSize + (logoSize - dims.width) / 2, y: logoY + (logoSize - dims.height) / 2, width: dims.width, height: dims.height });
+          page.drawImage(img, {
+            x: width - 48 - logoSize + (logoSize - dims.width) / 2,
+            y: logoY + (logoSize - dims.height) / 2,
+            width: dims.width,
+            height: dims.height,
+          });
         }
 
         // Header text (centered between logos)
@@ -88,58 +116,56 @@ export const Route = createFileRoute("/api/businesses/$id/certificate.pdf")({
         const t3W = helvO.widthOfTextAtSize(t3, 11);
         page.drawText(t3, { x: (width - t3W) / 2, y: headerTopY - 40, size: 11, font: helvO, color: goldLight });
 
-        // Certificate title
-        const titleY = headerY - 38;
+        // ===== CERTIFICATE TITLE =====
+        const titleY = headerY - 44;
         const title = "CERTIFICATE OF REGISTRATION";
-        const titleW = helv.widthOfTextAtSize(title, 26);
-        page.drawText(title, { x: (width - titleW) / 2, y: titleY, size: 26, font: helv, color: green });
-        page.drawLine({ start: { x: width / 2 - 130, y: titleY - 8 }, end: { x: width / 2 + 130, y: titleY - 8 }, thickness: 1, color: gold });
+        const titleW = helv.widthOfTextAtSize(title, 24);
+        page.drawText(title, { x: (width - titleW) / 2, y: titleY, size: 24, font: helv, color: green });
+        page.drawLine({ start: { x: width / 2 - 120, y: titleY - 8 }, end: { x: width / 2 + 120, y: titleY - 8 }, thickness: 1, color: gold });
 
-        // Preamble
+        // ===== PREAMBLE =====
         const pre = "This is to certify that";
-        const preW = helvR.widthOfTextAtSize(pre, 13);
-        page.drawText(pre, { x: (width - preW) / 2, y: titleY - 36, size: 13, font: helvR, color: ink });
+        const preW = helvR.widthOfTextAtSize(pre, 12);
+        page.drawText(pre, { x: (width - preW) / 2, y: titleY - 34, size: 12, font: helvR, color: ink });
 
-        // Business name (auto-scaled)
+        // ===== BUSINESS NAME (auto-scaled) =====
         const name = biz.business_name.toUpperCase();
-        let nameSize = 30;
-        while (helv.widthOfTextAtSize(name, nameSize) > width - 160 && nameSize > 14) nameSize -= 1;
+        let nameSize = 28;
+        while (helv.widthOfTextAtSize(name, nameSize) > width - 180 && nameSize > 14) nameSize -= 1;
         const nameW = helv.widthOfTextAtSize(name, nameSize);
-        const nameY = titleY - 72;
+        const nameY = titleY - 70;
         page.drawText(name, { x: (width - nameW) / 2, y: nameY, size: nameSize, font: helv, color: gold });
 
-        // Body — single block, well-spaced
+        // ===== BODY =====
         const body1 = `is officially registered in the ${biz.category} sector of the`;
-        const body1W = helvR.widthOfTextAtSize(body1, 12);
-        page.drawText(body1, { x: (width - body1W) / 2, y: nameY - 28, size: 12, font: helvR, color: ink });
+        const body1W = helvR.widthOfTextAtSize(body1, 11);
+        page.drawText(body1, { x: (width - body1W) / 2, y: nameY - 26, size: 11, font: helvR, color: ink });
 
-        const body2 = `Made-in-Taraba Digital Registry, operating from ${biz.community}, ${biz.lga} Local Government Area.`;
-        const body2W = helvR.widthOfTextAtSize(body2, 12);
-        page.drawText(body2, { x: (width - body2W) / 2, y: nameY - 44, size: 12, font: helvR, color: ink });
+        const body2 = `Made-in-Taraba Digital Registry, operating from ${biz.community}, ${biz.lga} LGA.`;
+        const body2W = helvR.widthOfTextAtSize(body2, 11);
+        page.drawText(body2, { x: (width - body2W) / 2, y: nameY - 42, size: 11, font: helvR, color: ink });
 
-        // Detail row — Registry ID (left) | Date of Approval (right)
-        const detailY = 150;
-        const colLeftX = 110;
-        const colRightX = width - 110;
+        // ===== DETAIL ROW — Registry ID (left) | Date (right) =====
+        const detailY = 140;
+        const colLeftX = 90;
+        const colRightX = width - 90;
 
-        // Left column
         page.drawText("REGISTRY ID", { x: colLeftX, y: detailY + 20, size: 9, font: helv, color: muted });
         const regId = biz.registry_id ?? "—";
-        page.drawText(regId, { x: colLeftX, y: detailY, size: 16, font: helv, color: greenDark });
+        page.drawText(regId, { x: colLeftX, y: detailY, size: 15, font: helv, color: greenDark });
 
-        // Right column (right-aligned)
         const dateLabel = "DATE OF APPROVAL";
         const dateLabelW = helv.widthOfTextAtSize(dateLabel, 9);
         page.drawText(dateLabel, { x: colRightX - dateLabelW, y: detailY + 20, size: 9, font: helv, color: muted });
         const date = biz.approved_at
           ? new Date(biz.approved_at).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })
           : "—";
-        const dateW = helv.widthOfTextAtSize(date, 14);
-        page.drawText(date, { x: colRightX - dateW, y: detailY, size: 14, font: helv, color: greenDark });
+        const dateW = helv.widthOfTextAtSize(date, 13);
+        page.drawText(date, { x: colRightX - dateW, y: detailY, size: 13, font: helv, color: greenDark });
 
-        // Signature block (centered)
-        const sigY = 78;
-        page.drawLine({ start: { x: width / 2 - 110, y: sigY + 14 }, end: { x: width / 2 + 110, y: sigY + 14 }, thickness: 0.8, color: ink });
+        // ===== SIGNATURE BLOCK (centered, well below detail row) =====
+        const sigY = 70;
+        page.drawLine({ start: { x: width / 2 - 110, y: sigY + 16 }, end: { x: width / 2 + 110, y: sigY + 16 }, thickness: 0.8, color: ink });
         const sigName = "Authorised Signatory";
         const sigNameW = helv.widthOfTextAtSize(sigName, 10);
         page.drawText(sigName, { x: (width - sigNameW) / 2, y: sigY, size: 10, font: helv, color: ink });
@@ -147,9 +173,9 @@ export const Route = createFileRoute("/api/businesses/$id/certificate.pdf")({
         const sigSubW = helvR.widthOfTextAtSize(sigSub, 9);
         page.drawText(sigSub, { x: (width - sigSubW) / 2, y: sigY - 12, size: 9, font: helvR, color: muted });
 
-        // Footer verify line
+        // ===== FOOTER =====
         const verify = `Verify this certificate at: /business/${biz.id}`;
-        page.drawText(verify, { x: 40, y: 38, size: 8, font: helvR, color: muted });
+        page.drawText(verify, { x: 40, y: 36, size: 8, font: helvR, color: muted });
 
         const bytes = await pdf.save();
         return new Response(new Uint8Array(bytes), {
