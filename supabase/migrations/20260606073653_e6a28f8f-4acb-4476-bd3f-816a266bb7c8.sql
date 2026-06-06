@@ -1,0 +1,1 @@
+CREATE POLICY "Users view own download history" ON public.audit_log FOR SELECT TO authenticated USING (action = 'certificate_download' AND (details->>'user_id')::uuid = auth.uid());
