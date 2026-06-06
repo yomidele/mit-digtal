@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Copy, ShieldCheck, Sparkles } from "lucide-react";
+import { Copy, ShieldCheck, Sparkles, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { seedDemoAdmins } from "@/lib/seed.functions";
+import { seedDemoAdmins, seedDemoBusinessOwner } from "@/lib/seed.functions";
 
 const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
 
