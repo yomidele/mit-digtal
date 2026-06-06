@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Award, BarChart3, CheckCircle2, ClipboardList, Globe2, Handshake, Search, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import { ArrowRight, Award, BarChart3, Globe2, Handshake, Search, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Button } from "@/components/ui/button";
