@@ -30,7 +30,7 @@ function Dashboard() {
   const fetchProfile = useServerFn(getMyProfile);
   const fetchRoles = useServerFn(getMyRoles);
   const { data: roles, isLoading: rolesLoading } = useQuery({ queryKey: ["my-roles"], queryFn: () => fetchRoles() });
-  const isAdmin = (roles ?? []).some((r) => ADMIN_ROLES.has(r.role));
+  const isAdmin = (roles ?? []).some((r: { role: string }) => ADMIN_ROLES.has(r.role));
 
   useEffect(() => {
     if (!rolesLoading && isAdmin) navigate({ to: "/admin", replace: true });
