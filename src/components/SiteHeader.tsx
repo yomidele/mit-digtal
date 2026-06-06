@@ -67,7 +67,9 @@ export function SiteHeader() {
                   <Link to="/admin"><ShieldCheck className="mr-1 h-4 w-4" />Admin</Link>
                 </Button>
               )}
-              <Button asChild variant="ghost" size="sm"><Link to="/dashboard">Dashboard</Link></Button>
+              <Button asChild variant="ghost" size="icon" className="h-10 w-10 rounded-full border border-border hover:bg-secondary" aria-label="View dashboard">
+                <Link to="/dashboard"><User className="h-5 w-5 text-primary" /></Link>
+              </Button>
               <Button onClick={signOut} variant="outline" size="sm">Sign out</Button>
             </>
           ) : (
