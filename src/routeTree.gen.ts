@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegistrationGuideRouteImport } from './routes/registration-guide'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -25,6 +26,11 @@ import { Route as AuthenticatedAdminSubmissionsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminBusinessesRouteImport } from './routes/_authenticated/admin.businesses'
 import { Route as ApiBusinessesIdCertificateDotpdfRouteImport } from './routes/api/businesses.$id.certificate[.]pdf'
 
+const RegistrationGuideRoute = RegistrationGuideRouteImport.update({
+  id: '/registration-guide',
+  path: '/registration-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HelpRoute = HelpRouteImport.update({
   id: '/help',
   path: '/help',
@@ -110,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/help': typeof HelpRoute
+  '/registration-guide': typeof RegistrationGuideRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/help': typeof HelpRoute
+  '/registration-guide': typeof RegistrationGuideRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/help': typeof HelpRoute
+  '/registration-guide': typeof RegistrationGuideRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/register-business': typeof AuthenticatedRegisterBusinessRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/help'
+    | '/registration-guide'
     | '/admin'
     | '/dashboard'
     | '/register-business'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/help'
+    | '/registration-guide'
     | '/dashboard'
     | '/register-business'
     | '/business/$id'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/help'
+    | '/registration-guide'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/register-business'
@@ -211,12 +223,20 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DirectoryRoute: typeof DirectoryRoute
   HelpRoute: typeof HelpRoute
+  RegistrationGuideRoute: typeof RegistrationGuideRoute
   BusinessIdRoute: typeof BusinessIdRoute
   ApiBusinessesIdCertificateDotpdfRoute: typeof ApiBusinessesIdCertificateDotpdfRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/registration-guide': {
+      id: '/registration-guide'
+      path: '/registration-guide'
+      fullPath: '/registration-guide'
+      preLoaderRoute: typeof RegistrationGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/help': {
       id: '/help'
       path: '/help'
@@ -364,6 +384,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DirectoryRoute: DirectoryRoute,
   HelpRoute: HelpRoute,
+  RegistrationGuideRoute: RegistrationGuideRoute,
   BusinessIdRoute: BusinessIdRoute,
   ApiBusinessesIdCertificateDotpdfRoute: ApiBusinessesIdCertificateDotpdfRoute,
 }
