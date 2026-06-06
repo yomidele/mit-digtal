@@ -6,10 +6,24 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// Deploy target: Vercel when DEPLOY_TARGET=vercel (or VERCEL=1 set by Vercel CI),
+// otherwise fall back to Lovable's default (Cloudflare) behavior.
+const isVercel =
+  process.env.DEPLOY_TARGET === "vercel" || process.env.VERCEL === "1";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  ...(isVercel
+    ? {
+        // Force Nitro on with the Vercel preset. Nitro emits a Vercel Build Output
+        // API bundle (.vercel/output) that Vercel auto-detects — no vercel.json needed.
+        nitro: {
+          preset: "vercel",
+        },
+      }
+    : {}),
 });
