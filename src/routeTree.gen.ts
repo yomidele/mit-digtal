@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegistrationGuideRouteImport } from './routes/registration-guide'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -29,6 +30,11 @@ import { Route as ApiBusinessesIdCertificateDotpdfRouteImport } from './routes/a
 const RegistrationGuideRoute = RegistrationGuideRouteImport.update({
   id: '/registration-guide',
   path: '/registration-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HelpRoute = HelpRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/help': typeof HelpRoute
+  '/privacy': typeof PrivacyRoute
   '/registration-guide': typeof RegistrationGuideRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/help': typeof HelpRoute
+  '/privacy': typeof PrivacyRoute
   '/registration-guide': typeof RegistrationGuideRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
   '/help': typeof HelpRoute
+  '/privacy': typeof PrivacyRoute
   '/registration-guide': typeof RegistrationGuideRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/help'
+    | '/privacy'
     | '/registration-guide'
     | '/admin'
     | '/dashboard'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/help'
+    | '/privacy'
     | '/registration-guide'
     | '/dashboard'
     | '/register-business'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/directory'
     | '/help'
+    | '/privacy'
     | '/registration-guide'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DirectoryRoute: typeof DirectoryRoute
   HelpRoute: typeof HelpRoute
+  PrivacyRoute: typeof PrivacyRoute
   RegistrationGuideRoute: typeof RegistrationGuideRoute
   BusinessIdRoute: typeof BusinessIdRoute
   ApiBusinessesIdCertificateDotpdfRoute: typeof ApiBusinessesIdCertificateDotpdfRoute
@@ -235,6 +248,13 @@ declare module '@tanstack/react-router' {
       path: '/registration-guide'
       fullPath: '/registration-guide'
       preLoaderRoute: typeof RegistrationGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/help': {
@@ -384,6 +404,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DirectoryRoute: DirectoryRoute,
   HelpRoute: HelpRoute,
+  PrivacyRoute: PrivacyRoute,
   RegistrationGuideRoute: RegistrationGuideRoute,
   BusinessIdRoute: BusinessIdRoute,
   ApiBusinessesIdCertificateDotpdfRoute: ApiBusinessesIdCertificateDotpdfRoute,
