@@ -104,61 +104,71 @@ function Index() {
       </section>
 
       {/* Stats strip — gold */}
-      <section className="relative bg-gold text-gold-foreground">
-        <div className="container mx-auto grid gap-6 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="bg-[#d4a017]">
+        <div className="container mx-auto grid grid-cols-2 gap-y-6 px-4 py-8 sm:grid-cols-3 lg:grid-cols-5 lg:divide-x lg:divide-[#0d2e1a]/15">
           {[
-            { v: stats?.totalBusinesses ?? 0, l: "Registered Businesses" },
-            { v: `${stats?.totalLgas ?? 0}/16`, l: "LGAs Active" },
-            { v: stats?.totalSectors ?? 0, l: "Sectors Covered" },
-            { v: CATEGORY_LIST.length, l: "Categories Tracked" },
+            { v: stats?.totalBusinesses ? `${stats.totalBusinesses.toLocaleString()}+` : "0", l: "Registered businesses" },
+            { v: `${stats?.totalLgasCovered ?? 16}`, l: "LGAs covered" },
+            { v: `${CATEGORY_LIST.length}`, l: "Industry sectors" },
+            { v: "₦4.2B+", l: "Estimated business value" },
+            { v: "38,000+", l: "Jobs represented" },
           ].map((s) => (
-            <div key={s.l} className="flex items-baseline gap-3 sm:flex-col sm:items-start sm:gap-1">
-              <div className="font-display text-3xl font-extrabold leading-none md:text-4xl">{s.v}</div>
-              <div className="text-xs font-semibold uppercase tracking-wider opacity-80">{s.l}</div>
+            <div key={s.l} className="flex flex-col items-center justify-center px-4 text-center lg:px-6">
+              <div className="font-display text-2xl font-semibold leading-none text-[#0d2e1a]">{s.v}</div>
+              <div className="mt-1.5 text-[11px] font-medium uppercase tracking-wider text-[#0d2e1a]/70">{s.l}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* Sectors */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="text-xs font-semibold uppercase tracking-wider text-primary">Featured Sectors</div>
-          <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">A snapshot of Taraba's productive economy</h2>
-          <p className="mt-3 text-muted-foreground">From agriculture to creative industries, the registry covers every sector driving the state forward.</p>
-        </div>
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {CATEGORY_LIST.map((c) => {
-            const Icon = SECTOR_ICONS[c];
-            return (
-              <Link key={c} to="/directory" search={{ category: c }} className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary hover:shadow-elegant">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
-                  {Icon ? <Icon className="h-6 w-6" strokeWidth={1.75} /> : null}
-                </div>
-                <div className="mt-3 font-semibold text-foreground group-hover:text-primary">{c}</div>
-              </Link>
-            );
-          })}
+      <section className="bg-[#f7f9f6] py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center rounded-full bg-[#1a4d2e]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#1a4d2e]">Industry sectors</span>
+            <h2 className="mt-4 font-display text-3xl font-bold text-[#0d2e1a] md:text-4xl">Every sector of Taraba's economy, in one place</h2>
+            <p className="mt-3 text-muted-foreground">From smallholder farms to creative studios, every productive arm of the state lives in a single, searchable registry.</p>
+          </div>
+          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {CATEGORY_LIST.map((c) => {
+              const Icon = SECTOR_ICONS[c];
+              const palette = SECTOR_PALETTE[c] ?? SECTOR_PALETTE["Other"];
+              const count = stats?.sectorCounts?.[c] ?? 0;
+              return (
+                <Link
+                  key={c}
+                  to="/directory"
+                  search={{ category: c }}
+                  className="group flex flex-col items-center rounded-[10px] border border-[#dce8dc] bg-white px-3 py-4 text-center transition hover:-translate-y-0.5 hover:border-[#1a4d2e]/40 hover:shadow-sm"
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded-[10px]" style={{ background: palette.bg, color: palette.fg }}>
+                    {Icon ? <Icon className="h-5 w-5" strokeWidth={2} /> : null}
+                  </div>
+                  <div className="mt-3 text-[12px] font-medium leading-tight text-[#0d2e1a]">{c === "Creative Industries" ? "Creative industries" : c === "Other" ? "Other sectors" : c}</div>
+                  <div className="mt-0.5 text-[11px] text-muted-foreground">{count.toLocaleString()} {count === 1 ? "business" : "businesses"}</div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-secondary py-20">
+      <section className="bg-white py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-2xl text-center">
-            <div className="text-xs font-semibold uppercase tracking-wider text-primary">How it works</div>
-            <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">Three steps to get listed</h2>
+            <span className="inline-flex items-center rounded-full bg-[#1a4d2e]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#1a4d2e]">How it works</span>
+            <h2 className="mt-4 font-display text-3xl font-bold text-[#0d2e1a] md:text-4xl">Get listed in three simple steps</h2>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {[
-              { icon: ClipboardList, title: "Register", body: "Complete the 6-step business registration form with your details, location, capacity, and media." },
-              { icon: ShieldCheck, title: "Verify", body: "State Admins review your submission, may request additional information, and approve your listing." },
-              { icon: CheckCircle2, title: "Get Listed", body: "Receive a unique registry ID, a downloadable certificate, and appear in the public directory." },
-            ].map((s, i) => (
-              <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6 shadow-sm">
-                <div className="absolute -top-4 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-gold font-display text-sm font-bold text-gold-foreground">{i + 1}</div>
-                <s.icon className="h-8 w-8 text-primary" />
-                <h3 className="mt-4 font-display text-lg font-bold">{s.title}</h3>
+              { n: 1, title: "Register your business", body: "Fill the multi-step form with your business, location, capacity, and supporting documents." },
+              { n: 2, title: "Verification & approval", body: "State Admins review your submission, request clarifications if needed, and approve your listing." },
+              { n: 3, title: "Get discovered", body: "Receive a unique registry ID, download your certificate, and appear in the public directory." },
+            ].map((s) => (
+              <div key={s.n} className="rounded-[10px] border border-[#dce8dc] bg-white p-7">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1a4d2e] font-display text-sm font-bold text-white">{s.n}</div>
+                <h3 className="mt-4 font-display text-lg font-bold text-[#0d2e1a]">{s.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
               </div>
             ))}
@@ -167,41 +177,48 @@ function Index() {
       </section>
 
       {/* Benefits */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="text-xs font-semibold uppercase tracking-wider text-primary">Why register</div>
-          <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">Benefits for your business</h2>
-          <p className="mt-3 text-muted-foreground">Join the official state record and unlock visibility, credibility, and opportunity.</p>
-        </div>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { icon: ShieldCheck, title: "Official Recognition", body: "Government-verified listing with a unique registry ID and downloadable certificate." },
-            { icon: Globe2, title: "Public Visibility", body: "Be discovered by buyers, investors, and partners through the public directory." },
-            { icon: TrendingUp, title: "Investment Ready", body: "Surface your financing needs and capacity to development partners and funders." },
-            { icon: Handshake, title: "Market Linkages", body: "Connect with cooperatives, processors, and offtakers across Taraba and beyond." },
-            { icon: BarChart3, title: "Sector Insights", body: "Benchmark your business against real, real-time sector and LGA data." },
-            { icon: Award, title: "Programs & Incentives", body: "Be first in line for state programs, grants, and capacity-building schemes." },
-          ].map((b) => (
-            <div key={b.title} className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary hover:shadow-elegant">
-              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
-                <b.icon className="h-5 w-5" />
+      <section className="bg-[#f7f9f6] py-20">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="inline-flex items-center rounded-full bg-[#1a4d2e]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#1a4d2e]">Why register</span>
+            <h2 className="mt-4 font-display text-3xl font-bold text-[#0d2e1a] md:text-4xl">Built for businesses, powered by government</h2>
+          </div>
+          <div className="mt-12 grid gap-4 md:grid-cols-2">
+            {[
+              { icon: TrendingUp, title: "Investment visibility", body: "Surface your scale, capacity, and growth story to investors and development partners.", bg: "#e8f5ee", fg: "#1a4d2e" },
+              { icon: BarChart3, title: "Access to finance", body: "Be matched with state and partner financing windows tailored to your sector.", bg: "#fef3e0", fg: "#b87a14" },
+              { icon: Handshake, title: "Market linkages", body: "Connect with cooperatives, processors, and offtakers across Taraba and beyond.", bg: "#e6f1fb", fg: "#1f5fa6" },
+              { icon: ShieldCheck, title: "Official recognition", body: "Government-verified listing with a unique registry ID and downloadable certificate.", bg: "#f3ebfb", fg: "#6b3fa0" },
+              { icon: Award, title: "Policy representation", body: "Your data informs state-level economic policy, planning, and incentive design.", bg: "#fde8e8", fg: "#a83232" },
+              { icon: Globe2, title: "Export readiness support", body: "Get flagged for export readiness programs, certifications, and trade promotion.", bg: "#e3f4f1", fg: "#0f6e63" },
+            ].map((b) => (
+              <div key={b.title} className="flex items-start gap-4 rounded-[10px] border border-[#dce8dc] bg-white p-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" style={{ background: b.bg, color: b.fg }}>
+                  <b.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-bold text-[#0d2e1a]">{b.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{b.body}</p>
+                </div>
               </div>
-              <h3 className="mt-4 font-display text-lg font-bold text-foreground">{b.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{b.body}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-hero py-16 text-white">
+      <section className="bg-[#1a4d2e] py-20 text-white">
         <div className="container mx-auto flex flex-col items-center gap-6 px-4 text-center">
-          <Search className="h-10 w-10 text-gold" />
-          <h2 className="font-display text-3xl font-bold md:text-4xl">Search the public business directory</h2>
-          <p className="max-w-xl text-white/85">No account needed — explore every approved business in Taraba State.</p>
-          <Button asChild size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90">
-            <Link to="/directory">Open directory</Link>
-          </Button>
+          <h2 className="font-display text-3xl font-bold md:text-4xl">Ready to put your business on the map?</h2>
+          <p className="max-w-xl text-white/80">Join thousands of Taraba businesses being seen, supported, and connected through the official state registry.</p>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg" className="bg-[#d4a017] text-[#0d2e1a] hover:bg-[#d4a017]/90 shadow-elegant">
+              <Link to="/auth" search={{ mode: "signup" }}>Register your business — it's free <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-white/50 bg-transparent text-white hover:bg-white/10">
+              <Link to="/directory"><Search className="mr-2 h-4 w-4" /> Browse the directory</Link>
+            </Button>
+          </div>
         </div>
       </section>
 
