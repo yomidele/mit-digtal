@@ -6,14 +6,10 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// Deploy target detection:
-// - DEPLOY_TARGET=vercel or VERCEL=1  → Nitro vercel preset (.vercel/output)
-// - DEPLOY_TARGET=netlify or NETLIFY=true → Nitro netlify preset (.netlify/functions-internal + dist)
-// - otherwise → Lovable default (Cloudflare)
+// Deploy target: Vercel when DEPLOY_TARGET=vercel (or VERCEL=1 set by Vercel CI),
+// otherwise fall back to Lovable's default (Cloudflare) behavior.
 const isVercel =
   process.env.DEPLOY_TARGET === "vercel" || process.env.VERCEL === "1";
-const isNetlify =
-  process.env.DEPLOY_TARGET === "netlify" || process.env.NETLIFY === "true";
 
 export default defineConfig({
   tanstackStart: {
@@ -22,8 +18,12 @@ export default defineConfig({
     server: { entry: "server" },
   },
   ...(isVercel
-    ? { nitro: { preset: "vercel" } }
-    : isNetlify
-    ? { nitro: { preset: "netlify" } }
+    ? {
+        // Force Nitro on with the Vercel preset. Nitro emits a Vercel Build Output
+        // API bundle (.vercel/output) that Vercel auto-detects — no vercel.json needed.
+        nitro: {
+          preset: "vercel",
+        },
+      }
     : {}),
 });
