@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getMyBusiness, getMyProfile } from "@/lib/business.functions";
 import { getMyRoles } from "@/lib/admin.functions";
-import { recordCertificateDownload, getMyDownloadHistory } from "@/lib/certificates.functions";
+import { downloadMyCertificate, getMyDownloadHistory } from "@/lib/certificates.functions";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "My Dashboard — Made-in-Taraba Registry" }] }),
