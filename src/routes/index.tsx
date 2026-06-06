@@ -19,14 +19,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-function StatCard({ value, label }: { value: number | string; label: string }) {
-  return (
-    <div className="rounded-2xl border border-white/15 bg-white/5 p-6 text-center backdrop-blur">
-      <div className="font-display text-4xl font-bold text-gold md:text-5xl">{value}</div>
-      <div className="mt-2 text-xs font-medium uppercase tracking-wider text-white/80">{label}</div>
-    </div>
-  );
-}
 
 function Index() {
   const fetchStats = useServerFn(getPublicStats);
