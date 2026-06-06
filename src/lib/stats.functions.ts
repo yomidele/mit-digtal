@@ -7,12 +7,16 @@ export const getPublicStats = createServerFn({ method: "GET" }).handler(async ()
     supabaseAdmin.from("businesses").select("category").eq("approval_status", "approved"),
     supabaseAdmin.from("businesses").select("lga").eq("approval_status", "approved"),
   ]);
-  const sectorSet = new Set((sectors.data ?? []).map((r) => r.category));
+  const sectorList = (sectors.data ?? []).map((r) => r.category);
+  const sectorSet = new Set(sectorList);
   const lgaSet = new Set((lgas.data ?? []).map((r) => r.lga));
+  const sectorCounts: Record<string, number> = {};
+  for (const c of sectorList) sectorCounts[c] = (sectorCounts[c] ?? 0) + 1;
   return {
     totalBusinesses: total ?? 0,
     totalSectors: sectorSet.size,
     totalLgas: lgaSet.size,
     totalLgasCovered: 16,
+    sectorCounts,
   };
 });
