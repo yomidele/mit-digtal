@@ -39,17 +39,16 @@ function Index() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-hero text-white">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-        <div className="container relative mx-auto grid gap-12 px-4 py-20 md:grid-cols-[1.3fr_1fr] md:py-28">
+        <div className="container relative mx-auto grid items-center gap-12 px-4 py-16 md:grid-cols-2 md:py-24 lg:gap-16">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium uppercase tracking-wider text-gold">
               <span className="h-1.5 w-1.5 rounded-full bg-gold" /> Official Government Platform
             </div>
-            <h1 className="mt-6 font-display text-4xl font-extrabold leading-tight md:text-6xl">
+            <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.05] md:text-5xl lg:text-6xl">
               Powering Taraba's Economy <span className="text-gold">Through Digital Innovation</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg text-white/85">
-              The Made-in-Taraba Digital Registry is the official database of businesses,
-              products, services, and value chain actors operating across all 16 LGAs of Taraba State.
+            <p className="mt-6 max-w-xl text-base text-white/85 md:text-lg">
+              The official registry of every business, product, service, and value-chain actor across all 16 LGAs of Taraba State — built to drive investment, policy, and growth.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-gold text-gold-foreground hover:bg-gold/90 shadow-elegant">
@@ -59,22 +58,73 @@ function Index() {
                 <Link to="/directory">Browse directory</Link>
               </Button>
             </div>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/70">
+              <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-gold" /> Verified by State Admins</div>
+              <div className="flex items-center gap-2"><Award className="h-4 w-4 text-gold" /> Unique Registry ID</div>
+              <div className="flex items-center gap-2"><Globe2 className="h-4 w-4 text-gold" /> Public Directory</div>
+            </div>
           </div>
-          <div className="flex items-center justify-center">
-            <div className="rounded-3xl bg-white/10 p-10 backdrop-blur">
-              <img src={crest} alt="Taraba State coat of arms" width={280} height={280} className="h-64 w-64 object-contain drop-shadow-2xl" />
+          <div className="relative">
+            <div className="relative overflow-hidden rounded-3xl border border-white/15 shadow-2xl ring-1 ring-gold/30">
+              <img
+                src={sectorsHero}
+                alt="A composite view of Taraba's productive sectors: agriculture, agro-processing, mining, manufacturing, trade, crafts, tourism, entrepreneurship, and creative industries"
+                width={1536}
+                height={1024}
+                className="h-full w-full object-cover"
+              />
+              {/* Gradient blend into hero background */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-primary-deep/80 via-primary-deep/10 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-primary-deep/90 to-transparent" />
+
+              {/* Floating sector chips */}
+              <div className="absolute left-3 top-3 flex flex-wrap gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
+                {(["Agriculture", "Mining", "Manufacturing"] as const).map((c) => {
+                  const Icon = SECTOR_ICONS[c];
+                  return (
+                    <span key={c} className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-primary shadow-sm sm:text-xs">
+                      <Icon className="h-3 w-3" /> {c}
+                    </span>
+                  );
+                })}
+              </div>
+              <div className="absolute bottom-3 right-3 flex flex-wrap justify-end gap-1.5 sm:bottom-4 sm:right-4 sm:gap-2">
+                {(["Tourism", "Creative Industries", "Trade"] as const).map((c) => {
+                  const Icon = SECTOR_ICONS[c];
+                  return (
+                    <span key={c} className="flex items-center gap-1 rounded-full bg-gold/95 px-2.5 py-1 text-[10px] font-semibold text-gold-foreground shadow-sm sm:text-xs">
+                      <Icon className="h-3 w-3" /> {c}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+            {/* Accent card */}
+            <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-gold/30 bg-white/95 px-4 py-3 shadow-elegant backdrop-blur sm:flex sm:items-center sm:gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary"><Sparkles className="h-5 w-5" /></div>
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">9 sectors</div>
+                <div className="text-sm font-bold text-foreground">One unified registry</div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="bg-primary-deep py-12 text-white">
-        <div className="container mx-auto grid gap-4 px-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard value={stats?.totalBusinesses ?? 0} label="Registered Businesses" />
-          <StatCard value={`${stats?.totalLgas ?? 0}/16`} label="LGAs Active" />
-          <StatCard value={stats?.totalSectors ?? 0} label="Sectors Covered" />
-          <StatCard value={CATEGORY_LIST.length} label="Categories Tracked" />
+      {/* Stats strip — gold */}
+      <section className="relative bg-gold text-gold-foreground">
+        <div className="container mx-auto grid gap-6 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { v: stats?.totalBusinesses ?? 0, l: "Registered Businesses" },
+            { v: `${stats?.totalLgas ?? 0}/16`, l: "LGAs Active" },
+            { v: stats?.totalSectors ?? 0, l: "Sectors Covered" },
+            { v: CATEGORY_LIST.length, l: "Categories Tracked" },
+          ].map((s) => (
+            <div key={s.l} className="flex items-baseline gap-3 sm:flex-col sm:items-start sm:gap-1">
+              <div className="font-display text-3xl font-extrabold leading-none md:text-4xl">{s.v}</div>
+              <div className="text-xs font-semibold uppercase tracking-wider opacity-80">{s.l}</div>
+            </div>
+          ))}
         </div>
       </section>
 
