@@ -60,7 +60,7 @@ export const getAdminBusiness = createServerFn({ method: "POST" })
       .select("full_name,phone,created_at")
       .eq("id", biz.user_id)
       .maybeSingle();
-    return { ...biz, owner_profile: profile ?? null };
+    return { ...biz, owner_profile: profile ?? null, completeness: validateBusinessCompleteness(biz) };
   });
 
 
