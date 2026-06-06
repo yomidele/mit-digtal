@@ -99,9 +99,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function ScrollToTop() {
   const router = useRouter();
+  const pathname = router.state.location.pathname;
+  const hash = router.state.location.hash;
   useEffect(() => {
+    if (hash) {
+      const id = hash.replace(/^#/, "");
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+    }
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [router.state.location.pathname]);
+  }, [pathname, hash]);
   return null;
 }
 

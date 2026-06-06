@@ -9,6 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as RegistrationGuideRouteImport } from './routes/registration-guide'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
@@ -24,6 +28,26 @@ import { Route as AuthenticatedAdminSubmissionsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminBusinessesRouteImport } from './routes/_authenticated/admin.businesses'
 import { Route as ApiBusinessesIdCertificateDotpdfRouteImport } from './routes/api/businesses.$id.certificate[.]pdf'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegistrationGuideRoute = RegistrationGuideRouteImport.update({
+  id: '/registration-guide',
+  path: '/registration-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DirectoryRoute = DirectoryRouteImport.update({
   id: '/directory',
   path: '/directory',
@@ -103,6 +127,10 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
+  '/help': typeof HelpRoute
+  '/privacy': typeof PrivacyRoute
+  '/registration-guide': typeof RegistrationGuideRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
@@ -118,6 +146,10 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
+  '/help': typeof HelpRoute
+  '/privacy': typeof PrivacyRoute
+  '/registration-guide': typeof RegistrationGuideRoute
+  '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
@@ -134,6 +166,10 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
+  '/help': typeof HelpRoute
+  '/privacy': typeof PrivacyRoute
+  '/registration-guide': typeof RegistrationGuideRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/register-business': typeof AuthenticatedRegisterBusinessRoute
@@ -151,6 +187,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/directory'
+    | '/help'
+    | '/privacy'
+    | '/registration-guide'
+    | '/terms'
     | '/admin'
     | '/dashboard'
     | '/register-business'
@@ -166,6 +206,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/directory'
+    | '/help'
+    | '/privacy'
+    | '/registration-guide'
+    | '/terms'
     | '/dashboard'
     | '/register-business'
     | '/business/$id'
@@ -181,6 +225,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/directory'
+    | '/help'
+    | '/privacy'
+    | '/registration-guide'
+    | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/register-business'
@@ -198,12 +246,44 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   DirectoryRoute: typeof DirectoryRoute
+  HelpRoute: typeof HelpRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RegistrationGuideRoute: typeof RegistrationGuideRoute
+  TermsRoute: typeof TermsRoute
   BusinessIdRoute: typeof BusinessIdRoute
   ApiBusinessesIdCertificateDotpdfRoute: typeof ApiBusinessesIdCertificateDotpdfRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/registration-guide': {
+      id: '/registration-guide'
+      path: '/registration-guide'
+      fullPath: '/registration-guide'
+      preLoaderRoute: typeof RegistrationGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/directory': {
       id: '/directory'
       path: '/directory'
@@ -343,6 +423,10 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   DirectoryRoute: DirectoryRoute,
+  HelpRoute: HelpRoute,
+  PrivacyRoute: PrivacyRoute,
+  RegistrationGuideRoute: RegistrationGuideRoute,
+  TermsRoute: TermsRoute,
   BusinessIdRoute: BusinessIdRoute,
   ApiBusinessesIdCertificateDotpdfRoute: ApiBusinessesIdCertificateDotpdfRoute,
 }
