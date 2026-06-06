@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as DirectoryRouteImport } from './routes/directory'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
@@ -24,6 +25,11 @@ import { Route as AuthenticatedAdminSubmissionsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminBusinessesRouteImport } from './routes/_authenticated/admin.businesses'
 import { Route as ApiBusinessesIdCertificateDotpdfRouteImport } from './routes/api/businesses.$id.certificate[.]pdf'
 
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DirectoryRoute = DirectoryRouteImport.update({
   id: '/directory',
   path: '/directory',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
+  '/help': typeof HelpRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
+  '/help': typeof HelpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
   '/business/$id': typeof BusinessIdRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/directory': typeof DirectoryRoute
+  '/help': typeof HelpRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/register-business': typeof AuthenticatedRegisterBusinessRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/directory'
+    | '/help'
     | '/admin'
     | '/dashboard'
     | '/register-business'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/directory'
+    | '/help'
     | '/dashboard'
     | '/register-business'
     | '/business/$id'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/directory'
+    | '/help'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/register-business'
@@ -198,12 +210,20 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   DirectoryRoute: typeof DirectoryRoute
+  HelpRoute: typeof HelpRoute
   BusinessIdRoute: typeof BusinessIdRoute
   ApiBusinessesIdCertificateDotpdfRoute: typeof ApiBusinessesIdCertificateDotpdfRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/directory': {
       id: '/directory'
       path: '/directory'
@@ -343,9 +363,20 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   DirectoryRoute: DirectoryRoute,
+  HelpRoute: HelpRoute,
   BusinessIdRoute: BusinessIdRoute,
   ApiBusinessesIdCertificateDotpdfRoute: ApiBusinessesIdCertificateDotpdfRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
