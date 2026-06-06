@@ -41,6 +41,28 @@ export const listAdminBusinesses = createServerFn({ method: "POST" })
     return { rows: rows ?? [], count: count ?? 0, pageSize };
   });
 
+export const getAdminBusiness = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await assertAdmin(supabase, userId, true);
+    const { data: biz, error } = await supabase
+      .from("businesses")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!biz) throw new Error("Business not found");
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name,phone,created_at")
+      .eq("id", biz.user_id)
+      .maybeSingle();
+    return { ...biz, owner_profile: profile ?? null };
+  });
+
+
 const IdInput = z.object({ id: z.string().uuid() });
 const RejectInput = z.object({ id: z.string().uuid(), reason: z.string().trim().min(3).max(2000) });
 
