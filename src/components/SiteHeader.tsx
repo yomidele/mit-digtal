@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Menu, ShieldCheck, LogOut, LayoutDashboard, Home, BookOpen, Info } from "lucide-react";
+import { Menu, ShieldCheck, LogOut, LayoutDashboard, Home, BookOpen, Info, User } from "lucide-react";
 import crest from "@/assets/taraba-crest.png";
 
 export function SiteHeader() {
@@ -67,7 +67,9 @@ export function SiteHeader() {
                   <Link to="/admin"><ShieldCheck className="mr-1 h-4 w-4" />Admin</Link>
                 </Button>
               )}
-              <Button asChild variant="ghost" size="sm"><Link to="/dashboard">Dashboard</Link></Button>
+              <Button asChild variant="ghost" size="icon" className="h-10 w-10 rounded-full border border-border hover:bg-secondary" aria-label="View dashboard">
+                <Link to="/dashboard"><User className="h-5 w-5 text-primary" /></Link>
+              </Button>
               <Button onClick={signOut} variant="outline" size="sm">Sign out</Button>
             </>
           ) : (
@@ -82,7 +84,11 @@ export function SiteHeader() {
 
         {/* Mobile — primary CTA + hamburger */}
         <div className="flex items-center gap-2 md:hidden">
-          {!user && (
+          {user ? (
+            <Button asChild variant="ghost" size="icon" className="h-10 w-10 rounded-full border border-border" aria-label="View dashboard">
+              <Link to="/dashboard"><User className="h-5 w-5 text-primary" /></Link>
+            </Button>
+          ) : (
             <Button asChild size="sm" className="h-9 bg-primary px-3 text-xs text-primary-foreground hover:bg-primary-deep">
               <Link to="/auth" search={{ mode: "signup" }}>Register</Link>
             </Button>
