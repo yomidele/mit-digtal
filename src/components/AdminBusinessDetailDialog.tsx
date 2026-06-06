@@ -51,6 +51,8 @@ export function AdminBusinessDetailDialog({ id, onClose }: { id: string | null; 
               </div>
             )}
 
+            {b.completeness && <CompletenessPanel result={b.completeness as CompletenessResult} />}
+
             <Section title="Products & services">
               <p className="whitespace-pre-wrap text-sm text-foreground/90">{b.products_services}</p>
             </Section>
