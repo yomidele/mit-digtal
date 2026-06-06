@@ -38,12 +38,12 @@ export const upsertMyBusiness = createServerFn({ method: "POST" })
     if (existing) {
       if (existing.approval_status === "approved") throw new Error("Approved businesses cannot be edited without admin unlock.");
       // Resubmitting after rejection/suspension → send back to the pending queue
-      const updatePayload: Record<string, unknown> = { ...data };
-      if (existing.approval_status === "rejected" || existing.approval_status === "suspended") {
-        updatePayload.approval_status = "pending";
-        updatePayload.rejection_reason = null;
-      }
+      const reset = existing.approval_status === "rejected" || existing.approval_status === "suspended";
+      const updatePayload = reset
+        ? { ...data, approval_status: "pending", rejection_reason: null }
+        : data;
       const { error } = await supabase.from("businesses").update(updatePayload).eq("id", existing.id);
+
       if (error) throw new Error(error.message);
       return { id: existing.id, status: "updated" as const };
     }
