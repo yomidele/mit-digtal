@@ -170,3 +170,48 @@ function Info({ icon: Icon, label, value }: { icon?: React.ComponentType<{ class
     </div>
   );
 }
+
+function CompletenessPanel({ result }: { result: CompletenessResult }) {
+  if (result.complete) {
+    return (
+      <div className="flex items-start gap-3 rounded-xl border border-success/30 bg-success/5 p-3 text-sm">
+        <CheckCircle2 className="mt-0.5 h-5 w-5 text-success" />
+        <div>
+          <div className="font-semibold text-foreground">Ready for approval</div>
+          <div className="text-xs text-muted-foreground">All required fields, photos, and documents are present.</div>
+        </div>
+      </div>
+    );
+  }
+  const grouped = result.issues.reduce<Record<string, typeof result.issues>>((acc, i) => {
+    (acc[i.category] ??= []).push(i);
+    return acc;
+  }, {});
+  const labels: Record<string, string> = {
+    identity: "Identity & registration",
+    location: "Location",
+    contact: "Contact",
+    operations: "Operations & market",
+    media: "Photos",
+    documents: "Supporting documents",
+  };
+  return (
+    <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm">
+      <div className="flex items-center gap-2">
+        <ShieldAlert className="h-5 w-5 text-destructive" />
+        <div className="font-semibold text-destructive">Cannot approve — {result.issues.length} issue{result.issues.length === 1 ? "" : "s"} ({result.score}% complete)</div>
+      </div>
+      <ul className="mt-2 space-y-2">
+        {Object.entries(grouped).map(([cat, items]) => (
+          <li key={cat}>
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{labels[cat] ?? cat}</div>
+            <ul className="ml-4 list-disc space-y-0.5 text-foreground/90">
+              {items.map((i) => <li key={i.field + i.message}>{i.message}</li>)}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-2 text-xs text-muted-foreground">Reject the submission with these notes so the owner can revise and resubmit.</div>
+    </div>
+  );
+}
