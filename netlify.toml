@@ -1,0 +1,8 @@
+[build]
+  command = "DEPLOY_TARGET=netlify bun run build"
+  publish = "dist"
+
+# Do NOT add a SPA fallback like `/* -> /index.html`.
+# Nitro's `netlify` preset emits a serverless function that handles SSR,
+# server functions, and /api/* routes. Netlify auto-wires the function
+# from the build output — no manual redirects required.
