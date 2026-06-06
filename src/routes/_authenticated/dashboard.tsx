@@ -9,7 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getMyBusiness, getMyProfile } from "@/lib/business.functions";
 import { getMyRoles } from "@/lib/admin.functions";
-import { recordCertificateDownload, getMyDownloadHistory } from "@/lib/certificates.functions";
+import { downloadMyCertificate, getMyDownloadHistory } from "@/lib/certificates.functions";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "My Dashboard — Made-in-Taraba Registry" }] }),
@@ -95,21 +96,30 @@ function BusinessCard({ biz }: { biz: any }) {
   const StatusIcon = status.icon;
   const canEdit = biz.approval_status !== "approved";
   const qc = useQueryClient();
-  const recordFn = useServerFn(recordCertificateDownload);
-  const recordMut = useMutation({
-    mutationFn: () => recordFn({ data: { businessId: biz.id } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["my-download-history"] }),
+  const downloadFn = useServerFn(downloadMyCertificate);
+  const downloadMut = useMutation({
+    mutationFn: () => downloadFn({ data: { businessId: biz.id } }),
+    onSuccess: ({ base64, filename }) => {
+      const bin = atob(base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      qc.invalidateQueries({ queryKey: ["my-download-history"] });
+    },
+    onError: (e: Error) => toast.error(e.message ?? "Download failed"),
   });
 
   const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
-    recordMut.mutate();
-    const a = document.createElement("a");
-    a.href = `/api/businesses/${biz.id}/certificate.pdf?v=${Date.now()}`;
-    a.download = `${biz.registry_id ?? biz.id}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+    downloadMut.mutate();
   };
 
   return (

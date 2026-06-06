@@ -1,12 +1,16 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { MapPin, Mail, Phone, Globe, Building2, Users, Target, Award, ArrowLeft, Download } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getBusiness } from "@/lib/directory.functions";
+import { downloadMyCertificate } from "@/lib/certificates.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { SECTOR_ICONS } from "@/lib/taraba-data";
 
 export const Route = createFileRoute("/business/$id")({
@@ -21,10 +25,39 @@ function BusinessPage() {
   const fetcher = useServerFn(getBusiness);
   const { data: b, isLoading } = useQuery({ queryKey: ["business", id], queryFn: () => fetcher({ data: { id } }) });
 
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setCurrentUserId(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setCurrentUserId(session?.user?.id ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const downloadFn = useServerFn(downloadMyCertificate);
+  const downloadMut = useMutation({
+    mutationFn: () => downloadFn({ data: { businessId: id } }),
+    onSuccess: ({ base64, filename }) => {
+      const bin = atob(base64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    },
+    onError: (e: Error) => toast.error(e.message ?? "Download failed"),
+  });
+
   if (isLoading) return <div className="min-h-screen bg-background"><SiteHeader /><div className="container mx-auto px-4 py-16 text-muted-foreground">Loading…</div></div>;
   if (!b) throw notFound();
 
   const Icon = SECTOR_ICONS[b.category] ?? SECTOR_ICONS["Other"];
+  const isOwner = !!currentUserId && currentUserId === b.user_id;
 
   return (
     <div className="min-h-screen bg-background">
@@ -49,13 +82,14 @@ function BusinessPage() {
                 <span className="inline-flex items-center gap-1"><Users className="h-4 w-4" />{b.employee_count} employees</span>
                 <span className="inline-flex items-center gap-1"><Target className="h-4 w-4" />{b.market_reach}</span>
               </div>
-              <div className="mt-4">
-                <Button asChild size="sm" className="bg-primary hover:bg-primary-deep">
-                  <a href={`/api/businesses/${b.id}/certificate.pdf?v=${Date.now()}`} download={`${b.registry_id ?? b.id}.pdf`}>
-                    <Download className="mr-2 h-4 w-4" />Download official certificate
-                  </a>
-                </Button>
-              </div>
+              {isOwner && (
+                <div className="mt-4">
+                  <Button size="sm" disabled={downloadMut.isPending} onClick={() => downloadMut.mutate()} className="bg-primary hover:bg-primary-deep">
+                    <Download className="mr-2 h-4 w-4" />
+                    {downloadMut.isPending ? "Preparing…" : "Download official certificate"}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
