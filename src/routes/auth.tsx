@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
@@ -47,6 +47,12 @@ function AuthPage() {
             <TabsContent value="signin"><SignInForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
             <TabsContent value="signup"><SignUpForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
           </Tabs>
+          <div className="mt-6 border-t border-border pt-4 text-center">
+            <Link to="/admin/login" className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Administrator? Sign in to the Admin Console
+            </Link>
+          </div>
         </div>
         <DemoAdminPanel onUse={(email) => { void email; }} />
       </section>

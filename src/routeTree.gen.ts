@@ -19,6 +19,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BusinessIdRouteImport } from './routes/business.$id'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AuthenticatedRegisterBusinessRouteImport } from './routes/_authenticated/register-business'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -75,6 +76,11 @@ const IndexRoute = IndexRouteImport.update({
 const BusinessIdRoute = BusinessIdRouteImport.update({
   id: '/business/$id',
   path: '/business/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRegisterBusinessRoute =
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
+  '/admin/login': typeof AdminLoginRoute
   '/business/$id': typeof BusinessIdRoute
   '/admin/businesses': typeof AuthenticatedAdminBusinessesRoute
   '/admin/submissions': typeof AuthenticatedAdminSubmissionsRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/register-business': typeof AuthenticatedRegisterBusinessRoute
+  '/admin/login': typeof AdminLoginRoute
   '/business/$id': typeof BusinessIdRoute
   '/admin/businesses': typeof AuthenticatedAdminBusinessesRoute
   '/admin/submissions': typeof AuthenticatedAdminSubmissionsRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/register-business': typeof AuthenticatedRegisterBusinessRoute
+  '/admin/login': typeof AdminLoginRoute
   '/business/$id': typeof BusinessIdRoute
   '/_authenticated/admin/businesses': typeof AuthenticatedAdminBusinessesRoute
   '/_authenticated/admin/submissions': typeof AuthenticatedAdminSubmissionsRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/register-business'
+    | '/admin/login'
     | '/business/$id'
     | '/admin/businesses'
     | '/admin/submissions'
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/dashboard'
     | '/register-business'
+    | '/admin/login'
     | '/business/$id'
     | '/admin/businesses'
     | '/admin/submissions'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/register-business'
+    | '/admin/login'
     | '/business/$id'
     | '/_authenticated/admin/businesses'
     | '/_authenticated/admin/submissions'
@@ -250,6 +262,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RegistrationGuideRoute: typeof RegistrationGuideRoute
   TermsRoute: typeof TermsRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   BusinessIdRoute: typeof BusinessIdRoute
   ApiBusinessesIdCertificateDotpdfRoute: typeof ApiBusinessesIdCertificateDotpdfRoute
 }
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       path: '/business/$id'
       fullPath: '/business/$id'
       preLoaderRoute: typeof BusinessIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/register-business': {
@@ -427,6 +447,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RegistrationGuideRoute: RegistrationGuideRoute,
   TermsRoute: TermsRoute,
+  AdminLoginRoute: AdminLoginRoute,
   BusinessIdRoute: BusinessIdRoute,
   ApiBusinessesIdCertificateDotpdfRoute: ApiBusinessesIdCertificateDotpdfRoute,
 }
