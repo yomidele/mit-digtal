@@ -64,7 +64,6 @@ function BusinessPage() {
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <Info label="Ownership" value={b.ownership_structure} />
             <Info label="Registration" value={b.registration_status} />
-            {b.registration_status && <Info label="Registration" value={b.registration_status} />}
             <Info label="Operational Status" value={b.operational_status} />
             <Info label="Export Readiness" value={b.export_readiness} />
             {b.production_capacity && <Info label="Production Capacity" value={b.production_capacity} />}
