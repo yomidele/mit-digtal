@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Menu, ShieldCheck, LogOut, LayoutDashboard, Home, BookOpen, Info } from "lucide-react";
+import { Menu, ShieldCheck, LogOut, LayoutDashboard, Home, BookOpen, Info, User } from "lucide-react";
 import crest from "@/assets/taraba-crest.png";
 
 export function SiteHeader() {
