@@ -182,7 +182,7 @@ export const Route = createFileRoute("/api/businesses/$id/certificate.pdf")({
           status: 200,
           headers: {
             "Content-Type": "application/pdf",
-            "Content-Disposition": `inline; filename="${(biz.registry_id ?? biz.id).replace(/[^A-Za-z0-9_-]/g, "_")}.pdf"`,
+            "Content-Disposition": `attachment; filename="${(biz.registry_id ?? biz.id).replace(/[^A-Za-z0-9_-]/g, "_")}.pdf"`,
             "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
             "Pragma": "no-cache",
             "Expires": "0",
