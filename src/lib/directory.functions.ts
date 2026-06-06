@@ -51,7 +51,7 @@ export const getBusiness = createServerFn({ method: "POST" })
     const { data: row, error } = await supabaseAdmin
       .from("businesses")
       .select(
-        "id,business_name,category,sub_sector,products_services,ownership_structure,registration_status,operational_status,lga,community,address,business_phone,business_email,website,employee_count,production_capacity,market_reach,key_markets,certifications,export_readiness,logo_url,image_urls,registry_id,view_count,approved_at",
+        "id,user_id,business_name,category,sub_sector,products_services,ownership_structure,registration_status,operational_status,lga,community,address,business_phone,business_email,website,employee_count,production_capacity,market_reach,key_markets,certifications,export_readiness,logo_url,image_urls,registry_id,view_count,approved_at",
       )
       .eq("id", data.id)
       .eq("approval_status", "approved")
