@@ -82,14 +82,22 @@ function BusinessPage() {
                 <span className="inline-flex items-center gap-1"><Users className="h-4 w-4" />{b.employee_count} employees</span>
                 <span className="inline-flex items-center gap-1"><Target className="h-4 w-4" />{b.market_reach}</span>
               </div>
-              {isOwner && (
-                <div className="mt-4">
+              <div className="mt-4">
+                {currentUserId === null ? (
+                  <Button asChild size="sm" className="bg-primary hover:bg-primary-deep">
+                    <Link to="/auth" search={{ redirect: `/business/${b.id}` } as never}>
+                      <Download className="mr-2 h-4 w-4" />Sign in to download certificate
+                    </Link>
+                  </Button>
+                ) : isOwner ? (
                   <Button size="sm" disabled={downloadMut.isPending} onClick={() => downloadMut.mutate()} className="bg-primary hover:bg-primary-deep">
                     <Download className="mr-2 h-4 w-4" />
                     {downloadMut.isPending ? "Preparing…" : "Download official certificate"}
                   </Button>
-                </div>
-              )}
+                ) : (
+                  <p className="text-xs text-muted-foreground">Only the business owner can download this certificate.</p>
+                )}
+              </div>
             </div>
           </div>
 
