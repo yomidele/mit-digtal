@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { getMyBusiness, getSignedUploadUrl, upsertMyBusiness } from "@/lib/business.functions";
+import { getMyRoles } from "@/lib/admin.functions";
 import {
   BUSINESS_CATEGORIES, CATEGORY_LIST, COMMON_CERTIFICATIONS, EMPLOYEE_BUCKETS,
   EXPORT_READINESS, MARKET_REACH, OPERATIONAL_STATUSES, OWNERSHIP_TYPES,
@@ -69,8 +70,15 @@ function RegisterBusiness() {
   const fetchBiz = useServerFn(getMyBusiness);
   const submit = useServerFn(upsertMyBusiness);
   const signUrl = useServerFn(getSignedUploadUrl);
+  const fetchRoles = useServerFn(getMyRoles);
 
-  const { data: existing, isLoading } = useQuery({ queryKey: ["my-business"], queryFn: () => fetchBiz() });
+  const { data: roles, isLoading: rolesLoading } = useQuery({ queryKey: ["my-roles"], queryFn: () => fetchRoles() });
+  const isAdmin = (roles ?? []).some((r: { role: string }) => ["lga_moderator", "state_admin", "super_admin"].includes(r.role));
+  useEffect(() => {
+    if (!rolesLoading && isAdmin) navigate({ to: "/admin", replace: true });
+  }, [rolesLoading, isAdmin, navigate]);
+
+  const { data: existing, isLoading } = useQuery({ queryKey: ["my-business"], queryFn: () => fetchBiz(), enabled: !rolesLoading && !isAdmin });
   const locked = existing?.approval_status === "approved";
 
   const [step, setStep] = useState(0);
