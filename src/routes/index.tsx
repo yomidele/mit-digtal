@@ -19,6 +19,20 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const SECTOR_PALETTE: Record<string, { bg: string; fg: string }> = {
+  "Agriculture": { bg: "#e8f5ee", fg: "#1a4d2e" },
+  "Agro-processing": { bg: "#fef3e0", fg: "#b87a14" },
+  "Mining": { bg: "#e6f1fb", fg: "#1f5fa6" },
+  "Manufacturing": { bg: "#f4e4dc", fg: "#8a4a2a" },
+  "Entrepreneurship": { bg: "#f3ebfb", fg: "#6b3fa0" },
+  "Trade": { bg: "#e1ecf7", fg: "#1d4f8a" },
+  "Crafts": { bg: "#fde8d6", fg: "#c4641a" },
+  "Tourism": { bg: "#e3f4f1", fg: "#0f6e63" },
+  "Creative Industries": { bg: "#fde8ee", fg: "#b1366a" },
+  "Other": { bg: "#eef0e2", fg: "#6b7a2a" },
+};
+
+
 
 function Index() {
   const fetchStats = useServerFn(getPublicStats);
