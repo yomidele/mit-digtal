@@ -40,7 +40,7 @@ export const Route = createFileRoute("/api/businesses/$id/certificate.pdf")({
 
         const origin = new URL(request.url).origin;
         const bytes = await generateCertificatePdf(biz, origin);
-        return new Response(bytes, {
+        return new Response(bytes as BlobPart, {
           status: 200,
           headers: {
             "Content-Type": "application/pdf",
