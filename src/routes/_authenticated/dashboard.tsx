@@ -1,12 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { CheckCircle2, Clock, Download, Eye, FileText, Pencil, XCircle, Ban } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getMyBusiness, getMyProfile } from "@/lib/business.functions";
+import { getMyRoles } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "My Dashboard — Made-in-Taraba Registry" }] }),
@@ -20,11 +22,32 @@ const STATUS = {
   suspended: { color: "bg-destructive text-destructive-foreground", icon: Ban, label: "Suspended" },
 } as const;
 
+const ADMIN_ROLES = new Set(["lga_moderator", "state_admin", "super_admin"]);
+
 function Dashboard() {
+  const navigate = useNavigate();
   const fetchBiz = useServerFn(getMyBusiness);
   const fetchProfile = useServerFn(getMyProfile);
-  const { data: biz, isLoading } = useQuery({ queryKey: ["my-business"], queryFn: () => fetchBiz() });
-  const { data: profile } = useQuery({ queryKey: ["my-profile"], queryFn: () => fetchProfile() });
+  const fetchRoles = useServerFn(getMyRoles);
+  const { data: roles, isLoading: rolesLoading } = useQuery({ queryKey: ["my-roles"], queryFn: () => fetchRoles() });
+  const isAdmin = (roles ?? []).some((r) => ADMIN_ROLES.has(r.role));
+
+  useEffect(() => {
+    if (!rolesLoading && isAdmin) navigate({ to: "/admin", replace: true });
+  }, [rolesLoading, isAdmin, navigate]);
+
+  const { data: biz, isLoading } = useQuery({ queryKey: ["my-business"], queryFn: () => fetchBiz(), enabled: !rolesLoading && !isAdmin });
+  const { data: profile } = useQuery({ queryKey: ["my-profile"], queryFn: () => fetchProfile(), enabled: !rolesLoading && !isAdmin });
+
+  if (rolesLoading || isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        <SiteHeader />
+        <div className="container mx-auto max-w-5xl px-4 py-16 text-sm text-muted-foreground">Loading…</div>
+        <SiteFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
