@@ -1,9 +1,10 @@
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { Award, Building2, FileText, Image as ImageIcon, Mail, MapPin, Phone, User } from "lucide-react";
+import { Award, Building2, CheckCircle2, FileText, Image as ImageIcon, Mail, MapPin, Phone, ShieldAlert, User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { getAdminBusiness } from "@/lib/admin.functions";
+import type { CompletenessResult } from "@/lib/business-completeness";
 
 export function AdminBusinessDetailDialog({ id, onClose }: { id: string | null; onClose: () => void }) {
   const fetchFn = useServerFn(getAdminBusiness);
