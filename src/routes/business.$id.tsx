@@ -51,7 +51,7 @@ function BusinessPage() {
               </div>
               <div className="mt-4">
                 <Button asChild size="sm" className="bg-primary hover:bg-primary-deep">
-                  <a href={`/api/businesses/${b.id}/certificate.pdf`} target="_blank" rel="noopener noreferrer">
+                  <a href={`/api/businesses/${b.id}/certificate.pdf?v=${Date.now()}`} target="_blank" rel="noopener noreferrer">
                     <Download className="mr-2 h-4 w-4" />Download official certificate
                   </a>
                 </Button>

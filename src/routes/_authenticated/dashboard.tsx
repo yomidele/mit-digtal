@@ -104,7 +104,7 @@ function BusinessCard({ biz }: { biz: any }) {
   const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
     recordMut.mutate();
-    window.open(`/api/businesses/${biz.id}/certificate.pdf`, "_blank", "noopener,noreferrer");
+    window.open(`/api/businesses/${biz.id}/certificate.pdf?v=${Date.now()}`, "_blank", "noopener,noreferrer");
   };
 
   return (
