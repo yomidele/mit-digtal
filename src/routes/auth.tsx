@@ -13,7 +13,10 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { seedDemoAdmins, seedDemoBusinessOwner } from "@/lib/seed.functions";
 
-const searchSchema = z.object({ mode: z.enum(["signin", "signup"]).optional() });
+const searchSchema = z.object({
+  mode: z.enum(["signin", "signup"]).optional(),
+  redirect: z.string().optional(),
+});
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
@@ -22,15 +25,24 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode } = Route.useSearch();
+  const { mode, redirect } = Route.useSearch();
   const navigate = useNavigate();
   const [tab, setTab] = useState<"signin" | "signup">(mode === "signup" ? "signup" : "signin");
+  const dest = redirect && redirect.startsWith("/") ? redirect : "/dashboard";
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/dashboard" });
+      if (data.user) {
+        if (dest === "/dashboard") navigate({ to: "/dashboard" });
+        else window.location.href = dest;
+      }
     });
-  }, [navigate]);
+  }, [navigate, dest]);
+
+  const onSuccess = () => {
+    if (dest === "/dashboard") navigate({ to: "/dashboard" });
+    else window.location.href = dest;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,8 +56,8 @@ function AuthPage() {
               <TabsTrigger value="signin">Sign in</TabsTrigger>
               <TabsTrigger value="signup">Create account</TabsTrigger>
             </TabsList>
-            <TabsContent value="signin"><SignInForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
-            <TabsContent value="signup"><SignUpForm onSuccess={() => navigate({ to: "/dashboard" })} /></TabsContent>
+            <TabsContent value="signin"><SignInForm onSuccess={onSuccess} /></TabsContent>
+            <TabsContent value="signup"><SignUpForm onSuccess={onSuccess} /></TabsContent>
           </Tabs>
           <div className="mt-6 border-t border-border pt-4 text-center">
             <Link to="/admin/login" className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-primary">
