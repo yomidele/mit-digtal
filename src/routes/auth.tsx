@@ -54,6 +54,7 @@ function AuthPage() {
             </Link>
           </div>
         </div>
+        <DemoBusinessOwnerPanel />
         <DemoAdminPanel onUse={(email) => { void email; }} />
       </section>
       <SiteFooter />
