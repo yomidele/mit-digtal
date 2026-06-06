@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { z } from "zod";
-import { Check, Clock, ExternalLink, Pause, Play, Search, X } from "lucide-react";
+import { Check, Clock, ExternalLink, Eye, Pause, Play, Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { approveBusiness, listAdminBusinesses, rejectBusiness, reopenBusiness, suspendBusiness } from "@/lib/admin.functions";
+import { AdminBusinessDetailDialog } from "@/components/AdminBusinessDetailDialog";
 import { TARABA_LGAS } from "@/lib/taraba-data";
+
 
 const searchSchema = z.object({
   status: z.enum(["pending", "approved", "rejected", "suspended", "all"]).optional(),
@@ -46,7 +48,9 @@ function SubmissionsPage() {
   const status = search.status ?? "pending";
   const [q, setQ] = useState(search.q ?? "");
   const [dialog, setDialog] = useState<{ kind: "reject" | "suspend"; id: string; name: string } | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-submissions", search],
@@ -121,6 +125,9 @@ function SubmissionsPage() {
                 <td className="px-4 py-3"><Badge className={STATUS_BADGE[b.approval_status] ?? ""}>{b.approval_status}</Badge></td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap justify-end gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => setDetailId(b.id)} title="View full submission">
+                      <Eye className="mr-1 h-3.5 w-3.5" />View
+                    </Button>
                     {b.approval_status === "approved" ? (
                       <Button asChild variant="ghost" size="sm"><Link to="/business/$id" params={{ id: b.id }}><ExternalLink className="h-3.5 w-3.5" /></Link></Button>
                     ) : null}
@@ -140,6 +147,7 @@ function SubmissionsPage() {
                   {b.rejection_reason && (b.approval_status === "rejected" || b.approval_status === "suspended") && (
                     <div className="mt-1 text-right text-[11px] text-destructive/80">{b.rejection_reason}</div>
                   )}
+
                 </td>
               </tr>
             ))}
@@ -183,9 +191,11 @@ function SubmissionsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <AdminBusinessDetailDialog id={detailId} onClose={() => setDetailId(null)} />
     </div>
   );
 }
+
 
 function Pagination({ page, totalPages, onChange, count }: { page: number; totalPages: number; onChange: (p: number) => void; count: number }) {
   return (
