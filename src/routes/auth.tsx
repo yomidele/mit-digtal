@@ -83,6 +83,7 @@ function DemoAdminPanel({ onUse }: { onUse: (email: string) => void }) {
     if (error) return toast.error(error.message + " — click 'Provision' first");
     toast.success("Signed in");
     onUse(email);
+    window.location.href = "/admin";
   }
 
   return (
