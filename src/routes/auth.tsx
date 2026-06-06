@@ -135,6 +135,55 @@ function DemoAdminPanel({ onUse }: { onUse: (email: string) => void }) {
   );
 }
 
+function DemoBusinessOwnerPanel() {
+  const seed = useServerFn(seedDemoBusinessOwner);
+  const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  async function provisionAndSignIn() {
+    setBusy(true);
+    try {
+      const result = await seed();
+      setReady(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email: result.email,
+        password: result.password,
+      });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success(`Signed in as Yomi Dele — ${result.registry_id ?? "registry pending"}`);
+      window.location.href = "/dashboard";
+    } catch (e: any) {
+      toast.error(e?.message ?? "Failed to provision demo owner");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mt-6 w-full max-w-md rounded-3xl border border-dashed border-primary/30 bg-secondary/40 p-6">
+      <div className="flex items-center gap-2">
+        <Sprout className="h-5 w-5 text-primary" />
+        <h2 className="font-display text-sm font-bold uppercase tracking-wider text-primary">Demo Business Owner</h2>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Preview the owner dashboard as <strong>Yomi Dele</strong> — an approved Agriculture business
+        (Dele Family Farms, Sardauna LGA) with a downloadable certificate.
+      </p>
+      <Button onClick={provisionAndSignIn} disabled={busy} size="sm" className="mt-3 w-full bg-primary hover:bg-primary-deep">
+        <Sparkles className="mr-2 h-4 w-4" />
+        {busy ? "Provisioning…" : ready ? "Re-sync & sign in" : "Provision & sign in as Yomi Dele"}
+      </Button>
+      <div className="mt-3 rounded-xl border border-border bg-card p-3 font-mono text-[11px] text-muted-foreground">
+        <div>yomi.dele@demo.taraba.gov.ng</div>
+        <div>Demo!Taraba2026</div>
+      </div>
+    </div>
+  );
+}
+
 function SignInForm({ onSuccess }: { onSuccess: () => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
