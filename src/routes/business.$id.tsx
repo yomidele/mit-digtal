@@ -82,13 +82,14 @@ function BusinessPage() {
                 <span className="inline-flex items-center gap-1"><Users className="h-4 w-4" />{b.employee_count} employees</span>
                 <span className="inline-flex items-center gap-1"><Target className="h-4 w-4" />{b.market_reach}</span>
               </div>
-              <div className="mt-4">
-                <Button asChild size="sm" className="bg-primary hover:bg-primary-deep">
-                  <a href={`/api/businesses/${b.id}/certificate.pdf?v=${Date.now()}`} download={`${b.registry_id ?? b.id}.pdf`}>
-                    <Download className="mr-2 h-4 w-4" />Download official certificate
-                  </a>
-                </Button>
-              </div>
+              {isOwner && (
+                <div className="mt-4">
+                  <Button size="sm" disabled={downloadMut.isPending} onClick={() => downloadMut.mutate()} className="bg-primary hover:bg-primary-deep">
+                    <Download className="mr-2 h-4 w-4" />
+                    {downloadMut.isPending ? "Preparing…" : "Download official certificate"}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
