@@ -73,7 +73,7 @@ function RegisterBusiness() {
   const fetchRoles = useServerFn(getMyRoles);
 
   const { data: roles, isLoading: rolesLoading } = useQuery({ queryKey: ["my-roles"], queryFn: () => fetchRoles() });
-  const isAdmin = (roles ?? []).some((r) => ["lga_moderator", "state_admin", "super_admin"].includes(r.role));
+  const isAdmin = (roles ?? []).some((r: { role: string }) => ["lga_moderator", "state_admin", "super_admin"].includes(r.role));
   useEffect(() => {
     if (!rolesLoading && isAdmin) navigate({ to: "/admin", replace: true });
   }, [rolesLoading, isAdmin, navigate]);
