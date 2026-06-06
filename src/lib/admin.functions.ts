@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { validateBusinessCompleteness } from "@/lib/business-completeness";
 
 async function assertAdmin(supabase: any, userId: string, allowModerator = false) {
   const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
@@ -33,7 +34,10 @@ export const listAdminBusinesses = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false })
       .range(from, to);
     if (data.status !== "all") q = q.eq("approval_status", data.status);
-    if (data.search) q = q.ilike("business_name", `%${data.search}%`);
+    if (data.search) {
+      const s = data.search.trim();
+      q = q.or(`business_name.ilike.%${s}%,registry_id.ilike.%${s}%`);
+    }
     if (data.lga) q = q.eq("lga", data.lga);
     if (data.category) q = q.eq("category", data.category);
     const { data: rows, count, error } = await q;
@@ -59,7 +63,7 @@ export const getAdminBusiness = createServerFn({ method: "POST" })
       .select("full_name,phone,created_at")
       .eq("id", biz.user_id)
       .maybeSingle();
-    return { ...biz, owner_profile: profile ?? null };
+    return { ...biz, owner_profile: profile ?? null, completeness: validateBusinessCompleteness(biz) };
   });
 
 
@@ -79,6 +83,23 @@ export const approveBusiness = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertAdmin(supabase, userId, true);
+
+    // Step-level completeness gate — block approval if anything required is missing.
+    const { data: current, error: fetchErr } = await supabase
+      .from("businesses")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (fetchErr) throw new Error(fetchErr.message);
+    if (!current) throw new Error("Business not found");
+    const check = validateBusinessCompleteness(current);
+    if (!check.complete) {
+      const summary = check.issues.slice(0, 5).map((i) => `• ${i.message}`).join("\n");
+      throw new Error(
+        `Submission is incomplete (${check.issues.length} issue${check.issues.length === 1 ? "" : "s"}). Ask the owner to revise:\n${summary}`,
+      );
+    }
+
     const { data: row, error } = await supabase
       .from("businesses")
       .update({ approval_status: "approved", approved_by: userId, rejection_reason: null })

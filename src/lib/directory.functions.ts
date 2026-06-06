@@ -25,7 +25,15 @@ export const listDirectory = createServerFn({ method: "POST" })
       .eq("approval_status", "approved")
       .order("approved_at", { ascending: false })
       .range(from, to);
-    if (data.search) q = q.ilike("business_name", `%${data.search}%`);
+    if (data.search) {
+      const s = data.search.trim();
+      // Registry ID looks like MIT/XXX/YYYY/00001 — match exactly or as a prefix.
+      if (/^MIT\//i.test(s) || /\//.test(s)) {
+        q = q.ilike("registry_id", `${s}%`);
+      } else {
+        q = q.or(`business_name.ilike.%${s}%,registry_id.ilike.%${s}%`);
+      }
+    }
     if (data.category) q = q.eq("category", data.category);
     if (data.lga) q = q.eq("lga", data.lga);
     if (data.marketReach) q = q.eq("market_reach", data.marketReach);

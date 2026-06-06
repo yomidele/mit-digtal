@@ -63,7 +63,7 @@ function Directory() {
           >
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by business name…" className="bg-white pl-9 text-foreground" />
+              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by business name or Registry ID (e.g. MIT/JAL/2026/00001)…" className="bg-white pl-9 text-foreground" />
             </div>
             <Button type="submit" className="bg-gold text-gold-foreground hover:bg-gold/90">Search</Button>
           </form>

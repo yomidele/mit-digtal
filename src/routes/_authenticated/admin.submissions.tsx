@@ -87,7 +87,7 @@ function SubmissionsPage() {
         >
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by business name…" className="pl-9" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by business name or Registry ID…" className="pl-9" />
           </div>
           <Select value={search.lga ?? "__all"} onValueChange={(v) => nav({ search: { ...search, lga: v === "__all" ? undefined : v, page: 1 } })}>
             <SelectTrigger className="w-[160px]"><SelectValue placeholder="All LGAs" /></SelectTrigger>
