@@ -34,7 +34,10 @@ export const listAdminBusinesses = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false })
       .range(from, to);
     if (data.status !== "all") q = q.eq("approval_status", data.status);
-    if (data.search) q = q.ilike("business_name", `%${data.search}%`);
+    if (data.search) {
+      const s = data.search.trim();
+      q = q.or(`business_name.ilike.%${s}%,registry_id.ilike.%${s}%`);
+    }
     if (data.lga) q = q.eq("lga", data.lga);
     if (data.category) q = q.eq("category", data.category);
     const { data: rows, count, error } = await q;
