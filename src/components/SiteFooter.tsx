@@ -72,7 +72,7 @@ export function SiteFooter() {
 }
 
 type FooterLink =
-  | { to: "/" | "/directory" | "/about"; label: string; search?: undefined }
+  | { to: "/" | "/directory" | "/about" | "/help" | "/registration-guide" | "/privacy" | "/terms"; label: string; search?: undefined }
   | { to: "/auth"; label: string; search: { mode: "signup" | "login" } }
   | { href: string; label: string };
 
