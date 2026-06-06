@@ -167,22 +167,29 @@ function Index() {
       </section>
 
       {/* Benefits */}
-      <section className="container mx-auto grid gap-8 px-4 py-20 md:grid-cols-2">
-        <div className="rounded-3xl border border-border bg-card p-8">
-          <h3 className="font-display text-2xl font-bold text-primary">For Businesses</h3>
-          <ul className="mt-6 space-y-3 text-sm">
-            {["Official government recognition", "Discoverable by buyers, investors, and partners", "Unique registry ID with downloadable certificate", "Access to future programs and incentives"].map((b) => (
-              <li key={b} className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />{b}</li>
-            ))}
-          </ul>
+      <section className="container mx-auto px-4 py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">Why register</div>
+          <h2 className="mt-2 font-display text-3xl font-bold md:text-4xl">Benefits for your business</h2>
+          <p className="mt-3 text-muted-foreground">Join the official state record and unlock visibility, credibility, and opportunity.</p>
         </div>
-        <div className="rounded-3xl border border-border bg-card p-8">
-          <h3 className="font-display text-2xl font-bold text-primary">For Government</h3>
-          <ul className="mt-6 space-y-3 text-sm">
-            {["Real-time visibility into the state's productive economy", "Data-driven policy and investment planning", "Verified database of value chain actors", "Standardized records across all 16 LGAs"].map((b) => (
-              <li key={b} className="flex items-start gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />{b}</li>
-            ))}
-          </ul>
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { icon: ShieldCheck, title: "Official Recognition", body: "Government-verified listing with a unique registry ID and downloadable certificate." },
+            { icon: Globe2, title: "Public Visibility", body: "Be discovered by buyers, investors, and partners through the public directory." },
+            { icon: TrendingUp, title: "Investment Ready", body: "Surface your financing needs and capacity to development partners and funders." },
+            { icon: Handshake, title: "Market Linkages", body: "Connect with cooperatives, processors, and offtakers across Taraba and beyond." },
+            { icon: BarChart3, title: "Sector Insights", body: "Benchmark your business against real, real-time sector and LGA data." },
+            { icon: Award, title: "Programs & Incentives", body: "Be first in line for state programs, grants, and capacity-building schemes." },
+          ].map((b) => (
+            <div key={b.title} className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-1 hover:border-primary hover:shadow-elegant">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
+                <b.icon className="h-5 w-5" />
+              </div>
+              <h3 className="mt-4 font-display text-lg font-bold text-foreground">{b.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{b.body}</p>
+            </div>
+          ))}
         </div>
       </section>
 
