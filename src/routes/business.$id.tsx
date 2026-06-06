@@ -1,12 +1,16 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { MapPin, Mail, Phone, Globe, Building2, Users, Target, Award, ArrowLeft, Download } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getBusiness } from "@/lib/directory.functions";
+import { downloadMyCertificate } from "@/lib/certificates.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { SECTOR_ICONS } from "@/lib/taraba-data";
 
 export const Route = createFileRoute("/business/$id")({
