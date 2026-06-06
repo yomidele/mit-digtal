@@ -84,7 +84,11 @@ export function SiteHeader() {
 
         {/* Mobile — primary CTA + hamburger */}
         <div className="flex items-center gap-2 md:hidden">
-          {!user && (
+          {user ? (
+            <Button asChild variant="ghost" size="icon" className="h-10 w-10 rounded-full border border-border" aria-label="View dashboard">
+              <Link to="/dashboard"><User className="h-5 w-5 text-primary" /></Link>
+            </Button>
+          ) : (
             <Button asChild size="sm" className="h-9 bg-primary px-3 text-xs text-primary-foreground hover:bg-primary-deep">
               <Link to="/auth" search={{ mode: "signup" }}>Register</Link>
             </Button>
