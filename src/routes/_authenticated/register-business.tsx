@@ -69,8 +69,15 @@ function RegisterBusiness() {
   const fetchBiz = useServerFn(getMyBusiness);
   const submit = useServerFn(upsertMyBusiness);
   const signUrl = useServerFn(getSignedUploadUrl);
+  const fetchRoles = useServerFn(getMyRoles);
 
-  const { data: existing, isLoading } = useQuery({ queryKey: ["my-business"], queryFn: () => fetchBiz() });
+  const { data: roles, isLoading: rolesLoading } = useQuery({ queryKey: ["my-roles"], queryFn: () => fetchRoles() });
+  const isAdmin = (roles ?? []).some((r) => ["lga_moderator", "state_admin", "super_admin"].includes(r.role));
+  useEffect(() => {
+    if (!rolesLoading && isAdmin) navigate({ to: "/admin", replace: true });
+  }, [rolesLoading, isAdmin, navigate]);
+
+  const { data: existing, isLoading } = useQuery({ queryKey: ["my-business"], queryFn: () => fetchBiz(), enabled: !rolesLoading && !isAdmin });
   const locked = existing?.approval_status === "approved";
 
   const [step, setStep] = useState(0);
