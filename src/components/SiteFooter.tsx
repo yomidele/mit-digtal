@@ -35,10 +35,10 @@ export function SiteFooter() {
           ]} />
 
           <FooterCol title="Support" links={[
-            { to: "/about", label: "Help Center" },
-            { to: "/about", label: "Registration Guide" },
-            { to: "/about", label: "Privacy Policy" },
-            { to: "/about", label: "Terms of Use" },
+            { to: "/help", label: "Help Center" },
+            { to: "/registration-guide", label: "Registration Guide" },
+            { to: "/privacy", label: "Privacy Policy" },
+            { to: "/terms", label: "Terms of Use" },
           ]} />
 
           <div>
