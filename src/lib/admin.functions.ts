@@ -80,6 +80,23 @@ export const approveBusiness = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     await assertAdmin(supabase, userId, true);
+
+    // Step-level completeness gate — block approval if anything required is missing.
+    const { data: current, error: fetchErr } = await supabase
+      .from("businesses")
+      .select("*")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (fetchErr) throw new Error(fetchErr.message);
+    if (!current) throw new Error("Business not found");
+    const check = validateBusinessCompleteness(current);
+    if (!check.complete) {
+      const summary = check.issues.slice(0, 5).map((i) => `• ${i.message}`).join("\n");
+      throw new Error(
+        `Submission is incomplete (${check.issues.length} issue${check.issues.length === 1 ? "" : "s"}). Ask the owner to revise:\n${summary}`,
+      );
+    }
+
     const { data: row, error } = await supabase
       .from("businesses")
       .update({ approval_status: "approved", approved_by: userId, rejection_reason: null })
