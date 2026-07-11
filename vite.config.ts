@@ -20,9 +20,14 @@ export default defineConfig({
   ...(isVercel
     ? {
         // Force Nitro on with the Vercel preset. Nitro emits a Vercel Build Output
-        // API bundle (.vercel/output) that Vercel auto-detects — no vercel.json needed.
+        // API bundle (.vercel/output) that Vercel auto-detects.
         nitro: {
           preset: "vercel",
+          output: {
+            dir: ".vercel/output",
+            publicDir: ".vercel/output/static",
+            serverDir: ".vercel/output/functions/__server.func",
+          },
         },
       }
     : {}),
