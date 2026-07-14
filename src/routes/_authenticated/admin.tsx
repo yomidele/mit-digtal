@@ -1,10 +1,9 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { LayoutDashboard, Inbox, Building2, Users, ShieldAlert } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { getMyRoles } from "@/lib/admin.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin — Made-in-Taraba Registry" }] }),
@@ -12,8 +11,26 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 function AdminLayout() {
-  const fetchRoles = useServerFn(getMyRoles);
-  const { data: roles, isLoading } = useQuery({ queryKey: ["my-roles"], queryFn: () => fetchRoles() });
+  // Query roles directly via the browser client (RLS allows users to read their own roles).
+  // This avoids any dependency on server-fn env vars being correctly configured on the host,
+  // and always reflects the live database (no JWT-baked claims, no cached state).
+  const { data: roles, isLoading } = useQuery({
+    queryKey: ["my-roles"],
+    staleTime: 0,
+    queryFn: async () => {
+      const { data: auth } = await supabase.auth.getUser();
+      const uid = auth.user?.id;
+      if (!uid) return [];
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role,assigned_lga")
+        .eq("user_id", uid);
+      // eslint-disable-next-line no-console
+      console.log("[admin] role check", { uid, roles: data, error });
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    },
+  });
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const roleSet = new Set((roles ?? []).map((r) => r.role));
